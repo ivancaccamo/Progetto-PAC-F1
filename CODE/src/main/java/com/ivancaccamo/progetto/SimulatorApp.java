@@ -11,13 +11,11 @@ import java.util.Arrays;
 public class SimulatorApp {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            createAndShowGui();
-        });
+        SwingUtilities.invokeLater(SimulatorApp::createAndShowGui);
     }
 
     private static void createAndShowGui() {
-        JFrame frame = new JFrame("F1 Circuit Simulator");
+        JFrame frame = new JFrame("F1 Circuit Simulator - Monza");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         TrackPanel track = new TrackPanel();
@@ -54,26 +52,100 @@ public class SimulatorApp {
     }
 
     static class TrackPanel extends JPanel implements ActionListener {
-        // normalized Monza-like path points (approximate, in [0,1])
-        private final double[][] normPoints = new double[][]{
-                {0.05, 0.50}, {0.18, 0.18}, {0.35, 0.12}, {0.60, 0.14}, {0.78, 0.22}, {0.90, 0.40},
-                {0.92, 0.55}, {0.88, 0.70}, {0.74, 0.82}, {0.58, 0.86}, {0.40, 0.84}, {0.26, 0.76},
-                {0.16, 0.64}, {0.10, 0.56}
-        };
+        /*
+         * Punti normalizzati (x,y in [0,1]) che approssimano la pianta del circuito di Monza.
+         * Sono in senso orario, partendo circa dall’uscita della Parabolica / inizio del rettilineo principale.
+         */
+        // Punti normalizzati (x,y in [0,1]) che approssimano Monza
+// senso orario, partendo dalla zona di Curva Grande / 03
+    // Punti normalizzati (x,y in [0,1]) che approssimano Monza
+// senso orario, partenza circa sul rettilineo di partenza/arrivo
+private final double[][] normPoints = new double[][]{
+        // Rettilineo di partenza / settore 1 (basso, da destra verso sinistra)
+        {0.60, 0.80},
+        {0.56, 0.80},
+        {0.52, 0.80},
+        {0.48, 0.80},
+        {0.44, 0.80},
+        {0.40, 0.80},
+        {0.36, 0.80},
+        {0.32, 0.80},
+        {0.28, 0.80},
+        {0.24, 0.80},
+        {0.22, 0.90},
+
+        // Curva Grande (03): grande arco verso sinistra che sale
+        {0.21, 0.77},
+        {0.20, 0.74},
+        {0.20, 0.70},
+        {0.20, 0.66},
+
+        // Lato sinistro quasi verticale (verso 04–05–06–07)
+        {0.19, 0.62},
+        {0.19, 0.58},
+        {0.19, 0.54},
+        {0.19, 0.50},
+        {0.20, 0.46},
+        {0.21, 0.42},
+        {0.22, 0.38},
+
+        // Zona in alto a sinistra prima della diagonale (Lesmo / inizio Serraglio)
+        {0.24, 0.34},
+        {0.26, 0.30},
+        {0.29, 0.26},
+        {0.32, 0.22},
+        {0.36, 0.20},
+
+        // Diagonale verso destra (Serraglio → Variante Ascari)
+        {0.40, 0.20},
+        {0.44, 0.23},
+        {0.48, 0.28},
+        {0.51, 0.34},
+        {0.54, 0.40},
+        {0.56, 0.46},
+        {0.58, 0.51},
+        {0.60, 0.54},
+
+        // Piccola chicane 08–09–10 + inizio rettilineo settore 3
+        {0.64, 0.53},
+        {0.68, 0.51},
+        {0.72, 0.50},
+        {0.76, 0.50},
+        {0.80, 0.50},
+        {0.84, 0.51},
+        {0.88, 0.53},
+
+        // Curva Parabolica (ultima curva, grande arco a destra)
+        {0.90, 0.56},
+        {0.92, 0.60},
+        {0.93, 0.64},
+        {0.94, 0.68},
+        {0.94, 0.72},
+        {0.93, 0.75},
+        {0.91, 0.78},
+        {0.88, 0.80},
+        {0.84, 0.81},
+        {0.80, 0.81},
+        {0.76, 0.81},
+        {0.72, 0.81},
+        {0.66, 0.81}
+        // l'ultimo punto verrà collegato al primo da closePath()
+};
 
         private Point[] scaledPoints;
         private double[] segLengths;
         private double[] cumLengths;
         private double totalLength = 0.0;
 
-        private double pos = 0.0; // distance along path in px
+        private double pos = 0.0;  // distanza lungo il tracciato in px
         private double speed = 6.0; // px per tick
         private final Timer timer;
 
         TrackPanel() {
             setPreferredSize(new Dimension(1000, 700));
-            setBackground(new Color(34, 139, 34)); // green grass
+            setBackground(new Color(34, 139, 34)); // prato
             timer = new Timer(16, this); // ~60 FPS
+
             addComponentListener(new java.awt.event.ComponentAdapter() {
                 public void componentResized(java.awt.event.ComponentEvent evt) {
                     recomputePath();
@@ -86,7 +158,6 @@ public class SimulatorApp {
             int w = getWidth();
             int h = getHeight();
             if (w <= 0 || h <= 0) {
-                // default size before shown
                 w = getPreferredSize().width;
                 h = getPreferredSize().height;
             }
@@ -103,7 +174,6 @@ public class SimulatorApp {
                 scaledPoints[i] = new Point(x, y);
             }
 
-            // compute segment lengths
             segLengths = new double[n];
             cumLengths = new double[n + 1];
             totalLength = 0.0;
@@ -118,7 +188,7 @@ public class SimulatorApp {
                 totalLength += len;
             }
             cumLengths[n] = totalLength;
-            // keep pos within range
+
             pos = pos % totalLength;
             if (pos < 0) pos += totalLength;
         }
@@ -126,21 +196,18 @@ public class SimulatorApp {
         void start() { if (!timer.isRunning()) timer.start(); }
         void stop() { if (timer.isRunning()) timer.stop(); }
         void reset() { stop(); pos = 0.0; repaint(); }
-        void setSpeed(int sliderValue) { // sliderValue 1..200
-            // map slider to px per tick
-            this.speed = 0.5 + sliderValue * 0.15; // approximate
+        void setSpeed(int sliderValue) {
+            this.speed = 0.5 + sliderValue * 0.15;
         }
 
         private Point2D getPointAtDistance(double d) {
             if (totalLength <= 0) return new Point2D.Double(0, 0);
-            // wrap
+
             double dd = d % totalLength;
             if (dd < 0) dd += totalLength;
 
-            // find segment
             int idx = Arrays.binarySearch(cumLengths, 0, cumLengths.length, dd);
             if (idx >= 0) {
-                // exact boundary -> return scaledPoints[idx]
                 int i = Math.min(idx, scaledPoints.length - 1);
                 return new Point2D.Double(scaledPoints[i].x, scaledPoints[i].y);
             } else {
@@ -163,7 +230,7 @@ public class SimulatorApp {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // draw track surface (thick dark gray path)
+            // pista
             g2.setColor(new Color(80, 80, 80));
             Stroke trackStroke = new BasicStroke(48f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
             g2.setStroke(trackStroke);
@@ -177,16 +244,17 @@ public class SimulatorApp {
                 g2.draw(trackPath);
             }
 
-            // inner grass: simply fill background already green; draw inner boundary
+            // bordo interno
             g2.setColor(Color.LIGHT_GRAY);
             g2.setStroke(new BasicStroke(2f));
             if (scaledPoints != null && scaledPoints.length > 0) {
                 g2.draw(trackPath);
             }
 
-            // draw centerline dashed
+            // linea tratteggiata centrale
             if (scaledPoints != null && scaledPoints.length > 0) {
-                Stroke dash = new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0f, new float[]{8f, 8f}, 0f);
+                Stroke dash = new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                        0f, new float[]{8f, 8f}, 0f);
                 g2.setStroke(dash);
                 g2.setColor(Color.WHITE);
                 Path2D center = new Path2D.Double();
@@ -196,15 +264,15 @@ public class SimulatorApp {
                 g2.draw(center);
             }
 
-            // draw car
+            // “macchina”
             Point2D p = getPointAtDistance(pos);
             double x = p.getX();
             double y = p.getY();
             int carSize = 14;
-            g2.setColor(new Color(0,0,0,100));
-            g2.fillOval((int)x - carSize/2 + 3, (int)y - carSize/2 + 3, carSize, carSize);
+            g2.setColor(new Color(0, 0, 0, 100));
+            g2.fillOval((int) x - carSize / 2 + 3, (int) y - carSize / 2 + 3, carSize, carSize);
             g2.setColor(Color.RED);
-            g2.fillOval((int)x - carSize/2, (int)y - carSize/2, carSize, carSize);
+            g2.fillOval((int) x - carSize / 2, (int) y - carSize / 2, carSize, carSize);
 
             g2.dispose();
         }
