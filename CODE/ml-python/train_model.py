@@ -24,7 +24,7 @@ def train():
 
     # 2. Definisci Features (X) e Target (y)
     # Ora usiamo anche il METEO e il NOME DEL CIRCUITO (più preciso dell'ID)
-    X = df[['circuit_name', 'compound', 'air_temp', 'track_temp']]
+    X = df[['circuit_name', 'compound', 'air_temp', 'track_temp', 'humidity', 'raining']]
     y = df[['base_time', 'degradation_rate']]
 
     # 3. Pipeline di Preprocessing
@@ -44,7 +44,7 @@ def train():
     ])
 
     # 5. Split Train/Test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
     # 6. Addestramento
     print("Addestramento in corso...")
