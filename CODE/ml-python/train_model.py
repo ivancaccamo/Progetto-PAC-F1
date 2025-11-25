@@ -40,11 +40,11 @@ def train():
     # 4. Modello: Random Forest è robusto per questi dati
     pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
-        ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+        ('regressor', RandomForestRegressor(n_estimators=100, random_state=100))
     ])
 
     # 5. Split Train/Test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=100)
 
     # 6. Addestramento
     print("Addestramento in corso...")
