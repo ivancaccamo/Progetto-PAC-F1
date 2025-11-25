@@ -113,13 +113,13 @@ def get_season_data(year):
                         'year': year,
                         'circuit_name': race['EventName'],
                         'circuitId': race['RoundNumber'],
-                        'driver': driver,          # Feature Nuova
-                        'team': team_name,         # Feature Nuova
+                        'driver': driver,          
+                        'team': team_name,         
                         'compound': compound,
                         'air_temp': avg_air_temp,
                         'track_temp': avg_track_temp,
-                        'humidity': avg_humidity,  # Feature Nuova
-                        'raining': is_raining,     # Feature Nuova
+                        'humidity': avg_humidity,  
+                        'raining': is_raining,     
                         'base_time': round(base_time, 3),
                         'degradation_rate': round(degradation, 5)
                     })

@@ -4,124 +4,146 @@ import com.ivancaccamo.pacf1.model.PredictionResponse.TyrePrediction;
 import com.ivancaccamo.pacf1.model.RaceStrategy;
 import com.ivancaccamo.pacf1.model.Stint;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class OptimizationEngine {
 
-    // Tempo medio perso in pit lane (cambio gomme + transito)
+    // Tempo medio perso in pit lane (cambio gomme + transito).
+    // Costante fissa, ma potrebbe essere resa dinamica per circuito in futuro.
     private static final double PIT_STOP_LOSS = 20.0; 
 
-    public RaceStrategy calculateOptimalStrategy(int totalLaps, List<TyrePrediction> tyres) {
-        System.out.println("--- AVVIO OTTIMIZZAZIONE AVANZATA (1 e 2 Soste) ---");
-        
-        RaceStrategy bestStrategy = new RaceStrategy();
-        bestStrategy.setTotalTime(Double.MAX_VALUE); // Inizializziamo con infinito
+    /**
+     * Calcola le migliori strategie possibili basandosi sui dati di degrado predetti.
+     * Utilizza un approccio di Ricerca Esaustiva (Brute Force) intelligente.
+     * * @param totalLaps Numero totale di giri della gara.
+     * @param tyres Lista delle mescole disponibili con i relativi parametri di performance.
+     * @return Una lista contenente le 3 strategie migliori (ordinate per tempo totale).
+     */
+    public List<RaceStrategy> calculateTop3Strategies(int totalLaps, List<TyrePrediction> tyres) {
+        List<RaceStrategy> allStrategies = new ArrayList<>();
 
-        if (tyres.isEmpty()) return bestStrategy;
+        // Se non abbiamo dati sulle gomme, restituiamo una lista vuota
+        if (tyres.isEmpty()) return allStrategies;
+
+        System.out.println("--- AVVIO OTTIMIZZAZIONE: Calcolo Top 3 Strategie ---");
 
         // =================================================================================
         // SCENARIO 1: UNA SOSTA (2 STINT)
+        // Complessità: O(M^2 * L) dove M=mescole, L=giri
         // =================================================================================
         for (TyrePrediction t1 : tyres) {
             for (TyrePrediction t2 : tyres) {
                 
-                // REGOLA F1: Devi usare almeno due mescole diverse in gara.
-                // Se t1 e t2 sono uguali (es. Soft-Soft), strategia ILLEGALE.
+                // REGOLA F1: Obbligo cambio mescola.
+                // Se la gomma del primo stint è uguale a quella del secondo, saltiamo.
                 if (t1.getCompound().equals(t2.getCompound())) continue;
 
-                // Cerchiamo il giro di sosta ottimale (tra il 10% e il 90% della gara)
-                for (int stopLap = (int)(totalLaps * 0.10); stopLap < (int)(totalLaps * 0.90); stopLap++) {
+                // Cerchiamo il "giro di taglio" ottimale per la sosta.
+                // Limitiamo la ricerca tra il 20% e l'80% della gara per evitare stint irreali (troppo corti/lunghi).
+                // Usiamo uno step di 2 giri (stopLap += 2) per velocizzare e ridurre strategie duplicate simili.
+                for (int stopLap = (int)(totalLaps * 0.2); stopLap < (int)(totalLaps * 0.8); stopLap += 2) {
                     
-                    // Stint 1: da giro 0 a stopLap
+                    // Calcolo tempo Stint 1 (da start a stopLap)
                     double time1 = calculateStintTime(t1, stopLap);
-                    // Stint 2: da stopLap alla fine
-                    double time2 = calculateStintTime(t2, totalLaps - stopLap);
                     
+                    // Calcolo tempo Stint 2 (da stopLap alla fine)
+                    int lapsStint2 = totalLaps - stopLap;
+                    double time2 = calculateStintTime(t2, lapsStint2);
+                    
+                    // Tempo Totale = Stint 1 + Pit Stop + Stint 2
                     double totalTime = time1 + PIT_STOP_LOSS + time2;
-
-                    if (totalTime < bestStrategy.getTotalTime()) {
-                        updateBestStrategy(bestStrategy, totalTime, 1, 
-                            new Stint(t1.getCompound(), 1, stopLap),
-                            new Stint(t2.getCompound(), stopLap + 1, totalLaps)
-                        );
-                    }
+                    
+                    // Creiamo l'oggetto strategia
+                    RaceStrategy s = new RaceStrategy();
+                    s.setTotalTime(totalTime);
+                    s.setPitStops(1);
+                    s.getStints().add(new Stint(t1.getCompound(), 1, stopLap));
+                    s.getStints().add(new Stint(t2.getCompound(), stopLap + 1, totalLaps));
+                    
+                    allStrategies.add(s);
                 }
             }
         }
 
         // =================================================================================
         // SCENARIO 2: DUE SOSTE (3 STINT)
+        // Complessità: O(M^3 * L^2) - Computazionalmente più pesante, ma gestibile per L=50
         // =================================================================================
         for (TyrePrediction t1 : tyres) {
             for (TyrePrediction t2 : tyres) {
                 for (TyrePrediction t3 : tyres) {
 
-                    // REGOLA F1: Devi usare almeno 2 mescole diverse.
-                    // Esempio valido: Soft -> Medium -> Soft (2 mescole usate).
-                    // Esempio illegale: Soft -> Soft -> Soft (1 mescola usata).
-                    Set<String> usedCompounds = new HashSet<>();
-                    usedCompounds.add(t1.getCompound());
-                    usedCompounds.add(t2.getCompound());
-                    usedCompounds.add(t3.getCompound());
-                    
-                    if (usedCompounds.size() < 2) continue; // Salta se illegale
+                    // REGOLA F1: Almeno 2 mescole diverse usate in totale.
+                    // Esempio valido: Soft -> Medium -> Soft
+                    // Esempio illegale: Soft -> Soft -> Soft
+                    boolean distinct = !t1.getCompound().equals(t2.getCompound()) || !t2.getCompound().equals(t3.getCompound());
+                    if (!distinct) continue;
 
-                    // Loop nidificati per trovare i due punti di sosta
-                    // Stop1: tra giro 10% e 60%
-                    for (int stop1 = (int)(totalLaps * 0.10); stop1 < (int)(totalLaps * 0.60); stop1++) {
+                    // Loop nidificati per trovare i due punti di sosta.
+                    // Usiamo step di 5 giri per ridurre drasticamente il numero di combinazioni da valutare.
+                    
+                    // Stop 1: tra il 15% e il 50% della gara
+                    for (int stop1 = (int)(totalLaps * 0.15); stop1 < (int)(totalLaps * 0.5); stop1 += 5) {
                         
-                        // Stop2: deve essere almeno 10 giri dopo Stop1 e prima della fine
-                        for (int stop2 = stop1 + 10; stop2 < (int)(totalLaps * 0.95); stop2++) {
+                        // Stop 2: deve essere almeno 15 giri dopo il primo e prima del 90% della gara
+                        for (int stop2 = stop1 + 15; stop2 < (int)(totalLaps * 0.9); stop2 += 5) {
                             
-                            // Stint 1
+                            // Calcolo tempi dei 3 stint
                             double time1 = calculateStintTime(t1, stop1);
-                            // Stint 2 (durata = stop2 - stop1)
                             double time2 = calculateStintTime(t2, stop2 - stop1);
-                            // Stint 3 (durata = total - stop2)
                             double time3 = calculateStintTime(t3, totalLaps - stop2);
 
-                            // Qui paghiamo DUE VOLTE il pit stop loss
+                            // Paghiamo 2 volte il costo del pit stop
                             double totalTime = time1 + PIT_STOP_LOSS + time2 + PIT_STOP_LOSS + time3;
 
-                            if (totalTime < bestStrategy.getTotalTime()) {
-                                updateBestStrategy(bestStrategy, totalTime, 2, 
-                                    new Stint(t1.getCompound(), 1, stop1),
-                                    new Stint(t2.getCompound(), stop1 + 1, stop2),
-                                    new Stint(t3.getCompound(), stop2 + 1, totalLaps)
-                                );
-                            }
+                            RaceStrategy s = new RaceStrategy();
+                            s.setTotalTime(totalTime);
+                            s.setPitStops(2);
+                            s.getStints().add(new Stint(t1.getCompound(), 1, stop1));
+                            s.getStints().add(new Stint(t2.getCompound(), stop1 + 1, stop2));
+                            s.getStints().add(new Stint(t3.getCompound(), stop2 + 1, totalLaps));
+                            
+                            allStrategies.add(s);
                         }
                     }
                 }
             }
         }
 
-        System.out.println("Strategia Migliore Trovata -> Soste: " + bestStrategy.getPitStops() + 
-                           " | Tempo: " + bestStrategy.getTotalTime());
-        return bestStrategy;
+        // =================================================================================
+        // SELEZIONE DELLE MIGLIORI
+        // =================================================================================
+        
+        // 1. Ordiniamo tutte le strategie trovate dalla più veloce alla più lenta
+        allStrategies.sort(Comparator.comparingDouble(RaceStrategy::getTotalTime));
+
+        // 2. (Opzionale) Filtro "Intelligente": rimuovere strategie troppo simili 
+        // (es. sosta al giro 20 e sosta al giro 22 con stesse gomme).
+        // Per ora prendiamo semplicemente le prime 3 assolute.
+
+        System.out.println("Strategie calcolate totali: " + allStrategies.size());
+        
+        // Restituiamo solo le prime 3 (il podio delle strategie)
+        return allStrategies.stream().limit(3).collect(Collectors.toList());
     }
 
-    // Helper per aggiornare l'oggetto strategia (gestisce varargs per gli stint)
-    private void updateBestStrategy(RaceStrategy strategy, double time, int stops, Stint... stints) {
-        strategy.setTotalTime(time);
-        strategy.setPitStops(stops);
-        strategy.getStints().clear();
-        for (Stint s : stints) {
-            strategy.getStints().add(s);
-        }
-    }
-
-    // Calcolo fisico del tempo impiegato per percorrere N giri con degrado
+    /**
+     * Calcola il tempo totale necessario per percorrere N giri con una specifica gomma,
+     * tenendo conto del degrado progressivo.
+     * * Modello Matematico: Progressione Aritmetica
+     * Tempo(giro i) = BaseTime + (Degrado * i)
+     */
     private double calculateStintTime(TyrePrediction tyre, int laps) {
         double total = 0;
         double currentLapTime = tyre.getBase_time();
         
         for (int i = 0; i < laps; i++) {
             total += currentLapTime;
-            // Al giro successivo la gomma è più lenta a causa del degrado
+            // Al giro successivo la gomma è più lenta
             currentLapTime += tyre.getDegradation_rate();
         }
         return total;

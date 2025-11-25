@@ -17,7 +17,7 @@ def evaluate():
         model = pickle.load(f)
 
     # 2. Fai le predizioni su TUTTO il dataset
-    X = df[['circuit_name', 'compound', 'air_temp', 'track_temp']]
+    X = df[['circuit_name', 'compound', 'air_temp', 'track_temp', 'team', 'driver', 'year']]
     y_true = df['degradation_rate']
     
     # Il modello restituisce [base_time, degradation], prendiamo la colonna 1 (degrado)

@@ -37,6 +37,9 @@ def predict():
     air_temp = data.get('air_temp', 25.0)   # Valore default se manca
     track_temp = data.get('track_temp', 35.0)
     compounds = data.get('compounds', [])
+    team = data.get('team', 'Red Bull Racing')      # Default generico
+    driver = data.get('driver', 'Verstappen')       # Default generico
+    year = data.get('year', 2024)                   # Anno corrente
 
     results = []
 
@@ -47,7 +50,10 @@ def predict():
             'circuit_name': [circuit],
             'compound': [comp],
             'air_temp': [air_temp],
-            'track_temp': [track_temp]
+            'track_temp': [track_temp],
+            'team': [team],         # <--- NUOVO
+            'driver': [driver],     # <--- NUOVO
+            'year': [year]          # <--- NUOVO
         })
         
         # Il modello restituisce [[base_time, degradation]]
