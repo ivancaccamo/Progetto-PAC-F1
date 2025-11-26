@@ -64,7 +64,7 @@ body {
 }
 
 .total-time {
-    font-size: 1.5em;
+    font-size: 2.0em;
     font-weight: bold;
     color: #e10600;
 }
@@ -96,7 +96,7 @@ body {
     position: relative;
     width: 100%;
     padding-bottom: 50%; /* smaller aspect ratio to shrink image display */
-    background: linear-gradient(135deg, #1e1e2e 0%, #2a2a35 100%);
+    background: linear-gradient(135deg, #1e1e2e 0%, #1a1a2f 100%);
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #444;
@@ -104,15 +104,13 @@ body {
 
 .track {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 30px;
+    left: 50px;
+    width: 80%;
+    height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Imposta le dimensioni dell'immagine al 0.65 (65%) sia in larghezza che altezza rispetto al container */
-    background-size: 65% 65%;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -176,7 +174,8 @@ body {
 
 .strategy-detail-card {
     width: 90%;
-    max-width: 1300px;
+    height: auto;
+    max-width: 700px;
     background: #15151e;
     border: 1px solid #333;
     padding: 18px;
