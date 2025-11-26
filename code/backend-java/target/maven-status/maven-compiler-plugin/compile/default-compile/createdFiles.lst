@@ -1,9 +1,0 @@
-com\ivancaccamo\pacf1\model\Stint.class
-com\ivancaccamo\pacf1\model\RaceStrategy.class
-com\ivancaccamo\pacf1\model\PredictionResponse.class
-com\ivancaccamo\pacf1\model\PredictionResponse$TyrePrediction.class
-com\ivancaccamo\pacf1\service\OptimizationEngine.class
-com\ivancaccamo\pacf1\App.class
-com\ivancaccamo\pacf1\service\PythonMLService.class
-com\ivancaccamo\pacf1\controller\StrategyController.class
-com\ivancaccamo\pacf1\model\PredictionRequest.class

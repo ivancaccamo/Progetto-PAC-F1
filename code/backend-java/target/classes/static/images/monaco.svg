@@ -1,0 +1,18 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#1a1a25"/>
+  
+  <!-- Track - Monaco (street circuit) -->
+  <path d="M 100 50 L 300 60 L 310 100 L 300 150 L 250 180 L 150 180 L 100 150 L 90 100 Z" 
+        fill="none" stroke="#444" stroke-width="40" stroke-linejoin="miter" stroke-linecap="butt"/>
+  
+  <!-- Track centerline -->
+  <path d="M 100 50 L 300 60 L 310 100 L 300 150 L 250 180 L 150 180 L 100 150 L 90 100 Z" 
+        fill="none" stroke="#666" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/>
+  
+  <!-- Pit lane indicator -->
+  <rect x="310" y="80" width="25" height="50" fill="none" stroke="#ffcc00" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Circuit name -->
+  <text x="200" y="280" font-family="Orbitron, sans-serif" font-size="14" fill="#e10600" text-anchor="middle" font-weight="bold">MONACO</text>
+</svg>

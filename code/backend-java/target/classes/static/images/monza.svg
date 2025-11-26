@@ -1,0 +1,16 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#1a1a25"/>
+  
+  <!-- Track - Monza (high speed oval) -->
+  <ellipse cx="200" cy="150" rx="120" ry="80" fill="none" stroke="#444" stroke-width="50" stroke-linejoin="round"/>
+  
+  <!-- Track centerline -->
+  <ellipse cx="200" cy="150" rx="120" ry="80" fill="none" stroke="#666" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/>
+  
+  <!-- Chicane marker -->
+  <line x1="200" y1="70" x2="200" y2="90" stroke="#ffcc00" stroke-width="3"/>
+  
+  <!-- Circuit name -->
+  <text x="200" y="280" font-family="Orbitron, sans-serif" font-size="14" fill="#e10600" text-anchor="middle" font-weight="bold">MONZA</text>
+</svg>

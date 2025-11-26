@@ -73,3 +73,229 @@ body {
 .badge-soft { background-color: #ff3b30; color: #000; }
 .badge-medium { background-color: #ffcc00; color: #000; }
 .badge-hard { background-color: #fff; color: #000; border: 1px solid #ccc; }
+
+/* Visualizzazione Circuito */
+.circuit-visualization {
+    background-color: #1a1a23;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.circuit-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #ccc;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+}
+
+.track-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%; /* smaller aspect ratio to shrink image display */
+    background: linear-gradient(135deg, #1e1e2e 0%, #2a2a35 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+.track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Imposta le dimensioni dell'immagine al 0.8 (80%) sia in larghezza che altezza rispetto al container */
+    background-size: 80% 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+.overlay-track {
+    position: relative;
+    /* overlay dimensionato per corrispondere all'immagine (80% del container) */
+    width: 60%;
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.strategy-list { margin-top: 8px; }
+
+.strategy-small {
+    /* Inherit main card look but smaller */
+    background-color: #252530;
+    border-left: 5px solid #e10600;
+    padding: 16px;
+    border-radius: 5px;
+    transition: transform 0.15s;
+    min-height: 200px;
+}
+
+.strategy-small .strategy-title { font-size: 0.85em; color: #cfcfd6; }
+.strategy-small .total-time { font-size: 1.05em; }
+.strategy-small:hover { transform: translateX(4px); background-color: #2a2a36; }
+
+/* Miniatura del circuito nella card */
+.circuit-thumb {
+    width: 132px;
+    height: 90px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.06);
+    background-color: #0f0f14;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Layout orizzontale per le small card con miniatura */
+.strategy-small.d-flex.align-items-center img.circuit-thumb {
+    flex: 0 0 auto;
+}
+
+.strategy-small .progress { height: 18px; }
+
+/* Dettaglio strategia overlay */
+.strategy-detail-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.strategy-detail-card {
+    width: 90%;
+    max-width: 1000px;
+    background: #15151e;
+    border: 1px solid #333;
+    padding: 18px;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.detail-circuit .circuit-visualization { margin: 0; }
+
+.detail-progress .progress { box-shadow: none; }
+
+/* Progress bar color mapping for compounds (fallbacks) */
+.compound-soft { background-color: #ff3b30 !important; }
+.compound-medium { background-color: #ffcc00 !important; }
+.compound-hard { background-color: #ffffff !important; color: #000; }
+
+/* Pit stop blink effect */
+.pit-blink {
+    animation: pitBlink 0.8s ease-in-out infinite;
+    color: #ffcc00 !important;
+    font-weight: 700;
+}
+
+.progress-pulse {
+    box-shadow: 0 0 12px rgba(255,204,0,0.9), 0 0 24px rgba(255,204,0,0.6);
+}
+
+@keyframes pitBlink {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+
+.pit-stop-marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(225, 6, 0, 0.4);
+    border: 2px solid #e10600;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6em;
+    color: #e10600;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    z-index: 5;
+    transform: translate(-50%, -50%);
+}
+
+.car {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #e10600;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff3b30, 0 0 15px rgba(225, 6, 0, 0.6);
+    z-index: 10;
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    left: 50%;
+    top: 10%;
+    transform: translate(-50%, -50%);
+}
+
+.car.pit-stop {
+    animation: none;
+    background-color: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00, 0 0 15px rgba(255, 204, 0, 0.6);
+}
+
+@keyframes moveCar {
+    0% { 
+        top: 10%;
+        left: 50%;
+    }
+    25% {
+        top: 50%;
+        left: 90%;
+    }
+    50% {
+        top: 90%;
+        left: 50%;
+    }
+    75% {
+        top: 50%;
+        left: 10%;
+    }
+    100% {
+        top: 10%;
+        left: 50%;
+    }
+}
+
+.lap-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #1e1e29;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.lap-counter-item {
+    text-align: center;
+    flex: 1;
+}
+
+.lap-counter-item .lap-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #e10600;
+}
+
+.lap-counter-item .lap-status {
+    font-size: 0.8em;
+    color: #888;
+}
