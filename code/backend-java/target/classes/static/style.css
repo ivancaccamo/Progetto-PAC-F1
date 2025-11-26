@@ -111,27 +111,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Imposta le dimensioni dell'immagine al 0.8 (80%) sia in larghezza che altezza rispetto al container */
-    background-size: 80% 80%;
+    /* Imposta le dimensioni dell'immagine al 0.65 (65%) sia in larghezza che altezza rispetto al container */
+    background-size: 65% 65%;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.oval-track {
-    position: relative;
-    width: 90%;
-    height: 90%;
-    border: 3px solid #555;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #2a2a3a, #1a1a25);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-}
 
 .overlay-track {
     position: relative;
-    /* overlay dimensionato per corrispondere all'immagine (80% del container) */
-    width: 60%;
-    height: 60%;
+    /* overlay dimensionato per corrispondere all'immagine (65% del container) */
+    width: 65%;
+    height: 65%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -156,8 +147,8 @@ body {
 
 /* Miniatura del circuito nella card */
 .circuit-thumb {
-    width: 88px;
-    height: 60px;
+    width: 132px;
+    height: 90px;
     border-radius: 6px;
     object-fit: cover;
     border: 1px solid rgba(255,255,255,0.06);

@@ -156,11 +156,15 @@ function showStrategyDetail(strategy, totalLaps, index) {
     simulateStrategyProgress(strategy, totalLaps, 'strategy-progress', {
         onUpdate: (lap, compound, status, lapTime) => {
             const lapEl = document.getElementById('detail-lap');
+            const lapDisplayEl = document.getElementById('lap-display-detail');
             const stintEl = document.getElementById('detail-stint');
+            const stintDisplayEl = document.getElementById('stint-display-detail');
             const statusEl = document.getElementById('detail-status');
             const progEl = document.getElementById('strategy-progress');
             if (lapEl) lapEl.innerText = `Giro ${lap}/${totalLaps}`;
+            if (lapDisplayEl) lapDisplayEl.innerText = `${lap}/${totalLaps}`;
             if (stintEl) stintEl.innerText = `Stint: ${compound}`;
+            if (stintDisplayEl) stintDisplayEl.innerText = compound;
             if (statusEl) statusEl.innerText = `Status: ${status}`;
 
             // Gestione effetto lampeggiante durante pit stop

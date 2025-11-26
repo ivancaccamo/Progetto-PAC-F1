@@ -111,8 +111,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Imposta le dimensioni dell'immagine al 0.8 (80%) sia in larghezza che altezza rispetto al container */
-    background-size: 80% 80%;
+    /* Imposta le dimensioni dell'immagine al 0.65 (65%) sia in larghezza che altezza rispetto al container */
+    background-size: 65% 65%;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -120,9 +120,9 @@ body {
 
 .overlay-track {
     position: relative;
-    /* overlay dimensionato per corrispondere all'immagine (80% del container) */
-    width: 60%;
-    height: 60%;
+    /* overlay dimensionato per corrispondere all'immagine (65% del container) */
+    width: 65%;
+    height: 65%;
     display: flex;
     align-items: center;
     justify-content: center;
