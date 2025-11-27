@@ -312,3 +312,33 @@ body {
 .btn-save-f1:hover svg {
     transform: scale(1.1); /* L'icona si ingrandisce leggermente */
 }
+
+/* Bottone Archivio Header */
+.btn-archive-f1 {
+    background-color: transparent;
+    border: 1px solid #666;
+    color: #ccc;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.btn-archive-f1:hover {
+    border-color: #fff;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-archive-f1 svg {
+    fill: currentColor;
+}
