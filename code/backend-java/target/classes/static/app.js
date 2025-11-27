@@ -96,10 +96,19 @@ async function calculateStrategy() {
     const track = document.getElementById('trackTemp').value;
     const air = document.getElementById('airTemp').value;
 
-    if (!circuit) {
-        alert("Seleziona un circuito!");
-        return;
+    // --- CONTROLLO CIRCUITO MANCANTE ---
+    if (!circuit || circuit === "") {
+        // Nascondi loading se era attivo
+        if(typeof loading !== 'undefined') loading.classList.add('d-none');
+
+        const toastEl = document.getElementById('circuitToast');
+        // Mostra il toast per 4 secondi
+        const toast = new bootstrap.Toast(toastEl, { delay: 4000 }); 
+        toast.show();
+        
+        return; // Ferma tutto
     }
+    
 
     // --- CONTROLLO TOAST ---
     // --- CONTROLLO TOAST ---
