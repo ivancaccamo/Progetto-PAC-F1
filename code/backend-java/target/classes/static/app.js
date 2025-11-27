@@ -447,7 +447,10 @@ async function saveStrategyToDB(strategy, circuitName) {
         });
 
         if (response.ok) {
-            alert("Strategia salvata nell'archivio!");
+            // --- MOSTRA TOAST SUCCESSO ---
+            const toastEl = document.getElementById('successToast');
+            const toast = new bootstrap.Toast(toastEl, { delay: 3000 }); // Sparisce dopo 3 secondi
+            toast.show();
         } else {
             alert("Errore nel salvataggio.");
         }

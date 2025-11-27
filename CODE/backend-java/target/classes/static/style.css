@@ -342,3 +342,12 @@ body {
 .btn-archive-f1 svg {
     fill: currentColor;
 }
+
+/* Variante Toast Verde (Successo) */
+.f1-toast-success {
+    border-left-color: #28a745 !important; /* Verde F1 */
+}
+
+.f1-toast-success .f1-toast-title {
+    color: #28a745 !important;
+}
