@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>SPS-F1 Strategy</title>
+    <button class="btn btn-outline-danger ms-3" onclick="loadHistory()">📂 ARCHIVIO GARE</button>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -129,6 +130,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script src="app.js"></script>
+
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark border border-danger text-white">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title f1-font">ARCHIVIO STRATEGIE SALVATE</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Circuito</th>
+                                <th>Tempo</th>
+                                <th>Soste</th>
+                                <th>Dettaglio Stint</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
 

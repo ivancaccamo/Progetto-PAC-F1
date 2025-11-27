@@ -111,7 +111,6 @@ async function calculateStrategy() {
     
 
     // --- CONTROLLO TOAST ---
-    // --- CONTROLLO TOAST ---
     if (laps < 15) {
         if(typeof loading !== 'undefined') loading.classList.add('d-none'); // Safe check
         
@@ -188,6 +187,12 @@ function renderStrategies(strategies) {
                         return `<div class="progress-bar" role="progressbar" style="width: ${width}%; background-color: ${color}; color: black; font-weight:bold;">${s.compound.charAt(0)}</div>`;
                     }).join('')}
                 </div>
+            </div>
+            
+            <div class="ms-3">
+                <button class="btn btn-outline-danger btn-sm" onclick='event.stopPropagation(); saveStrategyToDB(${JSON.stringify(strat)}, "${circuit}")'>
+                    💾
+                </button>
             </div>
         `;
 
@@ -404,3 +409,66 @@ function generateCircuitVisualization(strategy, totalLaps, strategyIndex, opts =
         </div>
     `;
 }
+
+
+
+async function saveStrategyToDB(strategy, circuitName) {
+    // Convertiamo gli stint in una stringa leggibile
+    const desc = strategy.stints.map(s => `${s.compound} (${s.laps})`).join(" -> ");
+    
+    const payload = {
+        circuit: circuitName,
+        totalTime: strategy.totalTime,
+        pitStops: strategy.pitStops,
+        stintsDescription: desc
+    };
+
+    try {
+        const response = await fetch('/api/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Strategia salvata nell'archivio!");
+        } else {
+            alert("Errore nel salvataggio.");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Errore di connessione.");
+    }
+}
+
+async function loadHistory() {
+    try {
+        const response = await fetch('/api/history');
+        const history = await response.json();
+        
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        history.reverse().forEach(item => { // Mostra i più recenti prima
+            const row = `
+                <tr>
+                    <td>${item.createdAt || '-'}</td>
+                    <td>${item.circuit}</td>
+                    <td class="text-danger fw-bold">${(item.totalTime/60).toFixed(0)}m ${(item.totalTime%60).toFixed(0)}s</td>
+                    <td>${item.pitStops}</td>
+                    <td class="small text-muted">${item.stintsDescription}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        // Apri la modale Bootstrap
+        const modal = new bootstrap.Modal(document.getElementById('historyModal'));
+        modal.show();
+
+    } catch (e) {
+        console.error(e);
+        alert("Impossibile caricare lo storico.");
+    }
+}
+
