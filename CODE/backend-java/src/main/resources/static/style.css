@@ -95,36 +95,35 @@ body {
 .track-container {
     position: relative;
     width: 100%;
-    padding-bottom: 50%; /* smaller aspect ratio to shrink image display */
+    padding-bottom: 50%; /* mantiene il rapporto */
     background: linear-gradient(135deg, #1e1e2e 0%, #1a1a2f 100%);
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #444;
 }
 
+/* QUI il riquadro interno dove sta l'immagine del circuito */
 .track {
     position: absolute;
-    top: 30px;
-    left: 50px;
-    width: 80%;
-    height: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* margine uniforme dentro il container (8% tutto attorno) */
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    bottom: 8%;
+
     background-repeat: no-repeat;
     background-position: center;
+    background-size: contain;   /* tutta l'immagine visibile, niente tagli */
 }
 
-
+/* overlay per eventuali elementi sopra la pista (car, ecc.) */
 .overlay-track {
-    position: relative;
-    /* overlay dimensionato per corrispondere all'immagine (65% del container) */
-    width: 65%;
-    height: 65%;
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    pointer-events: none;
 }
 
 .strategy-list { margin-top: 8px; }
@@ -236,4 +235,9 @@ body {
 .lap-counter-item .lap-status {
     font-size: 0.8em;
     color: #888;
+}
+
+/* Nasconde completamente le etichette PIT sul tracciato */
+.pit-stop-zone {
+    display: none !important;
 }

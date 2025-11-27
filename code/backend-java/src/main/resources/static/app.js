@@ -1,20 +1,79 @@
 // Mapping circuiti a immagini
 const circuitData = {
+
     'Bahrain Grand Prix': {
         image: 'Bahrain_Circuit.avif'
     },
     'Saudi Arabian Grand Prix': {
         image: 'Jeddah_Circuit.avif'
     },
+    'Australian Grand Prix': {
+        image: 'Australia_Circuit.avif'
+    },
+    'Japanese Grand Prix': {
+        image: 'Japan_Circuit.avif'
+    },
+    'Chinese Grand Prix': {
+        image: 'China_Circuit.avif'   // se il file si chiama "Cina_Circuit.avif" cambia qui
+    },
+    'Miami Grand Prix': {
+        image: 'Miami_Circuit.avif'
+    },
+    'Emilia Romagna Grand Prix': {
+        image: 'Emilia_Romagna_Circuit.avif'
+    },
     'Monaco Grand Prix': {
         image: 'Monaco_Circuit.avif'
+    },
+    'Canadian Grand Prix': {
+        image: 'Canada_Circuit.avif'
+    },
+    'Spanish Grand Prix': {
+        image: 'Barcellona_Circuit.avif'   // come avevi già messo tu
+    },
+    'Austrian Grand Prix': {
+        image: 'Austria_Circuit.avif'
+    },
+    'British Grand Prix': {
+        image: 'Great_Britain_Circuit.avif'
+    },
+    'Hungarian Grand Prix': {
+        image: 'Hungary_Circuit.avif'
+    },
+    'Belgian Grand Prix': {
+        image: 'Belgium_Circuit.avif'
+    },
+    'Dutch Grand Prix': {
+        image: 'Netherlands_Circuit.avif'
     },
     'Italian Grand Prix': {
         image: 'Monza_Circuit.avif'
     },
-    'Spanish Grand Prix': {
-        image: 'Barcellona_Circuit.avif'
+    'Azerbaijan Grand Prix': {
+        image: 'Baku_Circuit.avif'
+    },
+    'Singapore Grand Prix': {
+        image: 'Singapore_Circuit.avif'
+    },
+    'United States Grand Prix': {
+        image: 'USA_Circuit.avif'
+    },
+    'Mexico City Grand Prix': {
+        image: 'Mexico_Circuit.avif'
+    },
+    'São Paulo Grand Prix': {
+        image: 'Brazil_Circuit.avif'
+    },
+    'Las Vegas Grand Prix': {
+        image: 'Las_Vegas_Circuit.avif'
+    },
+    'Qatar Grand Prix': {
+        image: 'Qatar_Circuit.avif'
+    },
+    'Abu Dhabi Grand Prix': {
+        image: 'Abu_Dhabi_Circuit.avif'
     }
+
 };
 
 // Aggiorna i valori dei range slider in tempo reale
@@ -313,7 +372,7 @@ function generateCircuitVisualization(strategy, totalLaps, strategyIndex, opts =
         <div class="circuit-visualization">
             <div class="circuit-title">Visualizzazione Circuito - ${circuit} (${totalLaps} Giri)</div>
             <div class="track-container">
-                <div class="track" style="background-image: url('images/${circuitInfo.image}'); background-size: cover; background-position: center;">
+                <div class="track" style="background-image: url('images/${circuitInfo.image}');">
                     <div class="overlay-track">
                         ${pitStopHtml}
                         ${showCar ? `<div class="car" id="circuit-${strategyIndex}"></div>` : ''}
