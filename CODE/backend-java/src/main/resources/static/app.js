@@ -162,14 +162,16 @@ function renderStrategies(strategies) {
     // Limitiamo a 3 strategie (se presenti)
     strategies.slice(0, 3).forEach((strat, index) => {
         const small = document.createElement('div');
-        // Usa lo stesso stile della card principale ma con modifiche tramite .strategy-small
         small.className = 'strategy-card strategy-small mb-2 d-flex align-items-center';
 
         const totalSeconds = strat.totalTime;
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = (totalSeconds % 60).toFixed(2);
-        const rankLabel = index === 0 ? '<span class="badge bg-success mb-2">RACCOMANDATA</span>' : `<span class="badge bg-secondary mb-2">OPZIONE ${index + 1}</span>`;
+        const rankLabel = index === 0
+            ? '<span class="badge bg-success mb-2">RACCOMANDATA</span>'
+            : `<span class="badge bg-secondary mb-2">OPZIONE ${index + 1}</span>`;
 
+        // ⬇️ QUI NON C'È PIÙ l'onclick con JSON.stringify
         small.innerHTML = `
             <img class="circuit-thumb me-3" src="images/${circuitInfo.image}" alt="${circuit}" />
             <div style="flex:1;">
@@ -182,15 +184,19 @@ function renderStrategies(strategies) {
                 <label class="text-muted mb-1">Visualizzazione Stint</label>
                 <div class="progress" style="height: 24px; background-color: #333;">
                     ${strat.stints.map(s => {
-                        let color = s.compound === 'SOFT' ? '#ff3b30' : (s.compound === 'MEDIUM' ? '#ffcc00' : '#ffffff');
+                        let color = s.compound === 'SOFT' ? '#ff3b30'
+                                   : (s.compound === 'MEDIUM' ? '#ffcc00' : '#ffffff');
                         let width = (s.laps / totalLaps) * 100;
-                        return `<div class="progress-bar" role="progressbar" style="width: ${width}%; background-color: ${color}; color: black; font-weight:bold;">${s.compound.charAt(0)}</div>`;
+                        return `<div class="progress-bar" role="progressbar"
+                                    style="width: ${width}%; background-color: ${color}; color: black; font-weight:bold;">
+                                    ${s.compound.charAt(0)}
+                                </div>`;
                     }).join('')}
                 </div>
             </div>
             
             <div class="ms-4 d-flex align-items-center">
-                <button class="btn-save-f1" onclick='event.stopPropagation(); saveStrategyToDB(${JSON.stringify(strat)}, "${circuit}");'>
+                <button class="btn-save-f1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2-fill" viewBox="0 0 16 16">
                         <path d="M12 2h-2v3h2z"/>
                         <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.06.44A1.5 1.5 0 0 0 13 0h-2v4.5A1.5 1.5 0 0 1 9.5 6h-3A1.5 1.5 0 0 1 5 4.5V0H1.5a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v2h-2V1zm4 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M2 2h10v3H2z"/>
@@ -200,6 +206,13 @@ function renderStrategies(strategies) {
             </div>
         `;
 
+        // ⬇️ Agganciamo il click al bottone SALVA con l'oggetto strat vero
+        const saveBtn = small.querySelector('.btn-save-f1');
+        saveBtn.addEventListener('click', (event) => {
+            event.stopPropagation();          // non aprire il dettaglio
+            saveStrategyToDB(strat, circuit); // strat è un oggetto, NON una stringa
+        });
+
         small.style.cursor = 'pointer';
         small.addEventListener('click', () => showStrategyDetail(strat, totalLaps, index));
 
@@ -207,9 +220,8 @@ function renderStrategies(strategies) {
     });
 
     container.appendChild(listWrapper);
-
-    // Non avviare l'animazione dell'auto nella pagina principale
 }
+
 
 // Mostra la schermata di dettaglio per una strategia selezionata
 function showStrategyDetail(strategy, totalLaps, index) {
