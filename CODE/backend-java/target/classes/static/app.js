@@ -26,26 +26,58 @@ document.getElementById('airTemp').oninput = function() {
 }
 
 async function calculateStrategy() {
-    // Mostra loading
-    document.getElementById('loading').classList.remove('d-none');
-    document.getElementById('strategiesContainer').innerHTML = '';
+    const loading = document.getElementById('loading');
+    const container = document.getElementById('strategiesContainer');
+    
+    // Pulisci risultati precedenti
+    container.innerHTML = '';
 
     const circuit = document.getElementById('circuitSelect').value;
-    const laps = document.getElementById('lapsInput').value;
+    const laps = parseInt(document.getElementById('lapsInput').value); // Convertiamo in numero intero
     const track = document.getElementById('trackTemp').value;
     const air = document.getElementById('airTemp').value;
 
-    try {
-        // Chiamata al Backend Java
-        const response = await fetch(`/api/strategy?circuit=${circuit}&laps=${laps}&airTemp=${air}&trackTemp=${track}`);
-        const strategies = await response.json();
+    if (!circuit) {
+        alert("Seleziona un circuito!");
+        return;
+    }
 
-        renderStrategies(strategies);
+    // --- CONTROLLO TOAST ---
+    if (laps < 15) {
+        // Nascondi loading se era attivo
+        if(loading) loading.classList.add('d-none');
+        
+        // Trova l'elemento toast nell'HTML
+        const toastEl = document.getElementById('errorToast');
+        
+        // Crea l'oggetto Bootstrap Toast e mostralo
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        
+        return; // Blocca tutto qui
+    }
+
+    loading.classList.remove('d-none');
+
+    try {
+        // Chiamata API
+        const response = await fetch(`/api/strategy?circuit=${encodeURIComponent(circuit)}&laps=${laps}&airTemp=${air}&trackTemp=${track}`);
+        
+        if (!response.ok) throw new Error("Errore API Java");
+        
+        const strategies = await response.json();
+        
+        if (strategies.length === 0) {
+            container.innerHTML = '<div class="alert alert-warning">Nessuna strategia trovata. Riprova con parametri diversi.</div>';
+        } else {
+            renderStrategies(strategies, laps);
+        }
+
     } catch (error) {
         console.error("Errore:", error);
-        alert("Errore di connessione col backend!");
+        container.innerHTML = `<div class="alert alert-danger">Errore di comunicazione col server: ${error.message}</div>`;
     } finally {
-        document.getElementById('loading').classList.add('d-none');
+        loading.classList.add('d-none');
     }
 }
 
