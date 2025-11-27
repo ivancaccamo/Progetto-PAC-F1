@@ -278,3 +278,37 @@ body {
         opacity: 1;
     }
 }
+
+/* Pulsante Salva F1 Style */
+.btn-save-f1 {
+    background-color: transparent;
+    border: 1px solid #e10600;
+    color: #e10600;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 4px; /* Angoli tecnici, poco arrotondati */
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-save-f1:hover {
+    background-color: #e10600;
+    color: white;
+    box-shadow: 0 0 15px rgba(225, 6, 0, 0.6); /* Effetto Neon Glow */
+    transform: translateY(-2px); /* Leggero sollevamento */
+}
+
+.btn-save-f1 svg {
+    fill: currentColor; /* L'icona prende il colore del testo */
+    transition: transform 0.3s;
+}
+
+.btn-save-f1:hover svg {
+    transform: scale(1.1); /* L'icona si ingrandisce leggermente */
+}

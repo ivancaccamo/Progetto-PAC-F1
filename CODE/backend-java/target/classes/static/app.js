@@ -189,9 +189,13 @@ function renderStrategies(strategies) {
                 </div>
             </div>
             
-            <div class="ms-3">
-                <button class="btn btn-outline-danger btn-sm" onclick='event.stopPropagation(); saveStrategyToDB(${JSON.stringify(strat)}, "${circuit}")'>
-                    💾
+            <div class="ms-4 d-flex align-items-center">
+                <button class="btn-save-f1" onclick='event.stopPropagation(); saveStrategyToDB(${JSON.stringify(strat)}, "${circuit}");'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy2-fill" viewBox="0 0 16 16">
+                        <path d="M12 2h-2v3h2z"/>
+                        <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.06.44A1.5 1.5 0 0 0 13 0h-2v4.5A1.5 1.5 0 0 1 9.5 6h-3A1.5 1.5 0 0 1 5 4.5V0H1.5a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v2h-2V1zm4 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M2 2h10v3H2z"/>
+                    </svg>
+                    SALVA
                 </button>
             </div>
         `;
