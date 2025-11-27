@@ -241,3 +241,40 @@ body {
 .pit-stop-zone {
     display: none !important;
 }
+
+/* Stile Toast F1 */
+.f1-toast {
+    background-color: rgba(20, 20, 30, 0.95); /* Scuro e leggermente trasparente */
+    backdrop-filter: blur(10px); /* Effetto sfocatura dietro */
+    color: #fff;
+    border-left: 5px solid #e10600; /* La striscia rossa Ferrari a sinistra */
+    border-radius: 4px; /* Angoli poco arrotondati, più tecnici */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(225, 6, 0, 0.2); /* Ombra con leggero bagliore rosso */
+    min-width: 350px;
+}
+
+.f1-toast-title {
+    font-family: 'Orbitron', sans-serif; /* Font tecnico */
+    letter-spacing: 1px;
+    color: #e10600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+
+/* Animazione di entrata più fluida */
+.toast.show {
+    display: block;
+    opacity: 1;
+    animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effetto rimbalzo leggero */
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

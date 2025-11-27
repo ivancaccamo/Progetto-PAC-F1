@@ -102,18 +102,17 @@ async function calculateStrategy() {
     }
 
     // --- CONTROLLO TOAST ---
+    // --- CONTROLLO TOAST ---
     if (laps < 15) {
-        // Nascondi loading se era attivo
-        if(loading) loading.classList.add('d-none');
+        if(typeof loading !== 'undefined') loading.classList.add('d-none'); // Safe check
         
-        // Trova l'elemento toast nell'HTML
         const toastEl = document.getElementById('errorToast');
         
-        // Crea l'oggetto Bootstrap Toast e mostralo
-        const toast = new bootstrap.Toast(toastEl);
+        // Inizializza con opzioni: animazione attiva, nascondi dopo 5s
+        const toast = new bootstrap.Toast(toastEl, { delay: 5000 }); 
         toast.show();
         
-        return; // Blocca tutto qui
+        return;
     }
 
     loading.classList.remove('d-none');
