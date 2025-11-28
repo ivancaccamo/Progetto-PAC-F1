@@ -351,3 +351,15 @@ body {
 .f1-toast-success .f1-toast-title {
     color: #28a745 !important;
 }
+
+.f1-modal {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(225, 6, 0, 0.4);
+    border-radius: 6px;
+}
+
+.f1-modal .modal-title {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}

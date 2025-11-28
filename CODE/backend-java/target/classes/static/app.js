@@ -76,6 +76,55 @@ const circuitData = {
 
 };
 
+// === Gestione popup custom di conferma eliminazione ===
+let deleteContext = { row: null, id: null };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    if (!confirmBtn) return;
+
+    confirmBtn.addEventListener('click', async () => {
+        const { row, id } = deleteContext;
+        if (!id) return;
+
+        try {
+            const delResp = await fetch(`/api/history/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (delResp.ok) {
+                // rimuovo la riga dalla tabella
+                if (row && row.parentNode) {
+                    row.parentNode.removeChild(row);
+                }
+
+                // pulisco il contesto
+                deleteContext = { row: null, id: null };
+
+                // chiudo la modale
+                const modalEl = document.getElementById('confirmDeleteModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                if (modalInstance) modalInstance.hide();
+            } else {
+                alert("Errore durante l'eliminazione.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Errore di connessione durante l'eliminazione.");
+        }
+    });
+});
+
+// funzione helper per aprire la modale di conferma
+function showDeleteConfirm(rowEl, id) {
+    deleteContext.row = rowEl;
+    deleteContext.id = id;
+
+    const modalEl = document.getElementById('confirmDeleteModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
 // Aggiorna i valori dei range slider in tempo reale
 document.getElementById('trackTemp').oninput = function() {
     document.getElementById('trackTempVal').innerText = this.value + "°C";
@@ -491,29 +540,13 @@ async function loadHistory() {
             tbody.appendChild(row);
         });
 
-        // Aggancia i listener ai pulsanti CESTINO
+                // Aggancia i listener ai pulsanti CESTINO (aprono la modale custom)
         tbody.querySelectorAll('.btn-delete-strategy').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const id = btn.getAttribute('data-id');
-                const conferma = confirm('Vuoi davvero eliminare questa strategia salvata?');
-                if (!conferma) return;
-
-                try {
-                    const delResp = await fetch(`/api/history/${id}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (delResp.ok) {
-                        // Rimuovi la riga dalla tabella
-                        btn.closest('tr').remove();
-                    } else {
-                        alert('Errore durante l\'eliminazione.');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Errore di connessione durante l\'eliminazione.');
-                }
+                const row = btn.closest('tr');
+                showDeleteConfirm(row, id);   // usa la nostra modale custom
             });
         });
 
