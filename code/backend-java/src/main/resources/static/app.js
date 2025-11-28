@@ -136,6 +136,11 @@ document.getElementById('airTemp').oninput = function() {
 async function calculateStrategy() {
     const loading = document.getElementById('loading');
     const container = document.getElementById('strategiesContainer');
+
+    // NASCONDI IL BOTTONE E IL GRAFICO ALL'INIZIO DI UN NUOVO CALCOLO
+    document.getElementById('btnToggleChart').classList.add('d-none');
+    document.getElementById('chartContainer').classList.add('d-none');
+    document.getElementById('chartContainer').classList.remove('show');
     
     // Pulisci risultati precedenti
     container.innerHTML = '';
@@ -186,6 +191,12 @@ async function calculateStrategy() {
             container.innerHTML = '<div class="alert alert-warning">Nessuna strategia trovata. Riprova con parametri diversi.</div>';
         } else {
             renderStrategies(strategies, laps);
+            
+            // MOSTRA IL BOTTONE DEL GRAFICO
+            document.getElementById('btnToggleChart').classList.remove('d-none');
+            
+            // Genera il grafico (ma rimane nascosto finché non clicchi)
+            drawStrategyChart(strategies, laps);
         }
 
     } catch (error) {
@@ -560,3 +571,93 @@ async function loadHistory() {
     }
 }
 
+// --- LOGICA DISEGNO GRAFICO ---
+function drawStrategyChart(strategies, totalLaps) {
+    const canvas = document.getElementById('strategyChart');
+    if (!canvas) return; // Sicurezza se il canvas non esiste
+    
+    const ctx = canvas.getContext('2d');
+
+    // CORREZIONE CRITICA: Controlla se strategyChart è un'istanza valida di Chart prima di distruggere
+    if (strategyChart instanceof Chart) {
+        strategyChart.destroy();
+    }
+
+    const datasets = strategies.slice(0, 3).map((strat, index) => {
+        const dataPoints = [];
+        let degPerLap = 0.05; 
+        let baseLap = 90;
+        
+        strat.stints.forEach((stint, sIdx) => {
+            let factor = stint.compound === 'SOFT' ? 1.5 : (stint.compound === 'HARD' ? 0.8 : 1.0);
+            for (let i = 0; i < stint.laps; i++) {
+                let time = baseLap + (degPerLap * factor * i);
+                if (i === stint.laps - 1 && sIdx < strat.stints.length - 1) time += 20; 
+                dataPoints.push(time);
+            }
+        });
+
+        return {
+            label: index === 0 ? 'Raccomandata' : `Opzione ${index+1}`,
+            data: dataPoints,
+            borderColor: ['#ff3b30', '#ffcc00', '#aaaaaa'][index],
+            borderWidth: 2, 
+            tension: 0.3, 
+            pointRadius: 0
+        };
+    });
+
+    strategyChart = new Chart(ctx, {
+        type: 'line',
+        data: { 
+            labels: Array.from({length: totalLaps}, (_, i) => `L${i+1}`), 
+            datasets: datasets 
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'white' } } }, 
+            scales: { 
+                y: { title: { display:true, text:'Tempo Giro (s)', color:'#aaa'}, grid: { color: '#333' }, ticks: { color: '#eee' } }, 
+                x: { grid: { display: false }, ticks: { color: '#aaa', maxTicksLimit: 10 } } 
+            } 
+        }
+    });
+}
+
+// Funzione per mostrare/nascondere il grafico
+function toggleChart() {
+    const chartContainer = document.getElementById('chartContainer');
+    const btn = document.getElementById('btnToggleChart');
+    
+    if (chartContainer.classList.contains('d-none')) {
+        // APRI
+        chartContainer.classList.remove('d-none');
+        // Piccolo ritardo per permettere l'animazione fade-in
+        setTimeout(() => chartContainer.classList.add('show'), 10);
+        
+        // Cambia testo bottone
+        btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+            </svg>
+            CHIUDI GRAFICO
+        `;
+        btn.style.borderColor = '#fff';
+        btn.style.color = '#fff';
+    } else {
+        // CHIUDI
+        chartContainer.classList.remove('show');
+        chartContainer.classList.add('d-none');
+        
+        // Ripristina bottone
+        btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z"/>
+            </svg>
+            VISUALIZZA GRAFICO
+        `;
+        btn.style.borderColor = ''; // Ripristina stile CSS originale
+        btn.style.color = '';
+    }
+}
