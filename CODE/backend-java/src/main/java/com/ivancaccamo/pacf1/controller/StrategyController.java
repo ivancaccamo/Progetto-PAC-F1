@@ -23,30 +23,36 @@ public class StrategyController {
     private OptimizationEngine optimizer;
 
     @Autowired
-    private StrategyRepository repository; // <--- NUOVO: Collegamento al DB
+    private StrategyRepository repository;
 
-    // 1. Calcola Strategia (Esistente)
+    // 1. Calcola Strategia
     @GetMapping("/strategy")
     public List<RaceStrategy> getStrategy(
             @RequestParam(defaultValue = "Bahrain Grand Prix") String circuit,
             @RequestParam(defaultValue = "57") int laps,
             @RequestParam(defaultValue = "30.0") double airTemp,
             @RequestParam(defaultValue = "45.0") double trackTemp) {
-        
+
         PredictionResponse predictions = mlService.getPrediction(circuit, airTemp, trackTemp);
         if (predictions == null) return new ArrayList<>();
         return optimizer.calculateTop3Strategies(laps, predictions.getPredictions());
     }
 
-    // 2. NUOVO: Salva una strategia nel DB
+    // 2. Salva una strategia nel DB
     @PostMapping("/history")
     public SavedStrategy saveStrategy(@RequestBody SavedStrategy strategy) {
         return repository.save(strategy);
     }
 
-    // 3. NUOVO: Leggi tutto lo storico
+    // 3. Leggi tutto lo storico
     @GetMapping("/history")
     public List<SavedStrategy> getHistory() {
         return repository.findAll();
+    }
+
+    // 4. Cancella una strategia dall'archivio
+    @DeleteMapping("/history/{id}")
+    public void deleteHistory(@PathVariable Long id) {
+        repository.deleteById(id);
     }
 }

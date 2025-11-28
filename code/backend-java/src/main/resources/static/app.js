@@ -469,16 +469,52 @@ async function loadHistory() {
         tbody.innerHTML = '';
 
         history.reverse().forEach(item => { // Mostra i più recenti prima
-            const row = `
-                <tr>
-                    <td>${item.createdAt || '-'}</td>
-                    <td>${item.circuit}</td>
-                    <td class="text-danger fw-bold">${(item.totalTime/60).toFixed(0)}m ${(item.totalTime%60).toFixed(0)}s</td>
-                    <td>${item.pitStops}</td>
-                    <td class="small text-muted">${item.stintsDescription}</td>
-                </tr>
+            const totalSec = Number(item.totalTime || 0);
+            const min = Math.floor(totalSec / 60);
+            const sec = Math.floor(totalSec % 60);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.createdAt || '-'}</td>
+                <td>${item.circuit || '-'}</td>
+                <td class="text-danger fw-bold">${min}m ${sec}s</td>
+                <td>${item.pitStops != null ? item.pitStops : '-'}</td>
+                <td class="small text-muted">${item.stintsDescription || '-'}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger btn-delete-strategy" data-id="${item.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM5.5 5.5a.5.5 0 0 0-1 .034l.5 7a.5.5 0 1 0 .998-.068l-.5-7Zm3 .034a.5.5 0 0 0-.998-.034l-.5 7a.5.5 0 0 0 .998.068l.5-7Zm2-.034a.5.5 0 0 1 .466.534l-.5 7a.5.5 0 1 1-.998-.068l.5-7a.5.5 0 0 1 .532-.466Z"/>
+                        </svg>
+                    </button>
+                </td>
             `;
-            tbody.innerHTML += row;
+            tbody.appendChild(row);
+        });
+
+        // Aggancia i listener ai pulsanti CESTINO
+        tbody.querySelectorAll('.btn-delete-strategy').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                const conferma = confirm('Vuoi davvero eliminare questa strategia salvata?');
+                if (!conferma) return;
+
+                try {
+                    const delResp = await fetch(`/api/history/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (delResp.ok) {
+                        // Rimuovi la riga dalla tabella
+                        btn.closest('tr').remove();
+                    } else {
+                        alert('Errore durante l\'eliminazione.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Errore di connessione durante l\'eliminazione.');
+                }
+            });
         });
 
         // Apri la modale Bootstrap
