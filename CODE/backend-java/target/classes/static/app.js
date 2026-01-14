@@ -14,7 +14,7 @@ const circuitData = {
         image: 'Japan_Circuit.avif'
     },
     'Chinese Grand Prix': {
-        image: 'China_Circuit.avif'   // se il file si chiama "Cina_Circuit.avif" cambia qui
+        image: 'China_Circuit.avif'   
     },
     'Miami Grand Prix': {
         image: 'Miami_Circuit.avif'
@@ -29,7 +29,7 @@ const circuitData = {
         image: 'Canada_Circuit.avif'
     },
     'Spanish Grand Prix': {
-        image: 'Barcellona_Circuit.avif'   // come avevi già messo tu
+        image: 'Barcellona_Circuit.avif'   
     },
     'Austrian Grand Prix': {
         image: 'Austria_Circuit.avif'
