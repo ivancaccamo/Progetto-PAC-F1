@@ -7,19 +7,65 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Motore algoritmico principale del sistema SPS-F1.
+ * <p>
+ * Questa classe implementa la logica di ottimizzazione per determinare la strategia di gara ideale.
+ * Utilizza un approccio di <b>Programmazione Dinamica (DP)</b> con Memoization per esplorare
+ * l'albero delle possibili decisioni (mescola, lunghezza stint) e trovare il cammino minimo
+ * in termini di tempo totale.
+ * </p>
+ * <p>
+ * L'algoritmo tiene conto del degrado degli pneumatici, del tempo perso in pit-lane e
+ * dei vincoli regolamentari (obbligo di usare almeno due mescole diverse).
+ * </p>
+ *
+ * @author Team SPS-F1
+ */
 @Service
 public class OptimizationEngine {
 
+    /**
+     * Tempo medio perso per effettuare un pit-stop (percorrenza pit-lane + cambio gomme).
+     * Valore fisso stimato a 20.0 secondi.
+     */
     private static final double PIT_STOP_LOSS = 20.0;
+
+    /**
+     * Valore sentinella per indicare un tempo o un costo infinito (strategia non valida).
+     */
     private static final double INFINITY = 1e9; // Un numero grandissimo
 
+    /**
+     * Cache per la Memoization.
+     * Mappa uno stato univoco (giro corrente + maschera gomme usate) al miglior tempo ottenibile da quello stato in poi.
+     * Chiave: "giroCorrente-mascheraGommeUsate" -> Valore: Miglior Tempo
+     */
     // Cache per la Memoization: salva i risultati parziali per non ricalcolarli
     // Chiave: "giroCorrente-mascheraGommeUsate" -> Valore: Miglior Tempo
     private Map<String, Double> memo = new HashMap<>();
     
+    /**
+     * Mappa utilizzata per tracciare le decisioni ottimali prese ad ogni passo.
+     * Fondamentale per la fase di backtracking che ricostruisce la lista degli stint finali.
+     */
     // Per ricostruire la strategia alla fine
     private Map<String, StintDecision> bestDecisions = new HashMap<>();
 
+    /**
+     * Metodo principale per il calcolo delle strategie.
+     * <p>
+     * Esegue una ricerca esaustiva intelligente per trovare le Top 3 strategie migliori.
+     * Invece di lanciare una singola esecuzione DP, itera su tutte le possibili combinazioni
+     * di "Primo Stint" (mescola iniziale e durata) e delega alla DP l'ottimizzazione del resto della gara.
+     * Questo approccio ibrido permette di diversificare i risultati e trovare alternative valide
+     * (es. strategia a 1 sosta vs 2 soste).
+     * </p>
+     *
+     * @param totalLaps Il numero totale di giri della gara.
+     * @param tyres     La lista delle predizioni di degrado per le mescole disponibili.
+     * @return Una lista contenente le migliori 3 strategie uniche, ordinate per tempo totale crescente.
+     */
     public List<RaceStrategy> calculateTop3Strategies(int totalLaps, List<TyrePrediction> tyres) {
         System.out.println("--- AVVIO ALGORITMO DP (N SOSTE) - RICERCA ESAUSTIVA TOP 3 ---");
         
@@ -98,11 +144,27 @@ public class OptimizationEngine {
         return uniqueResults;
     }
     /**
-     * FUNZIONE RICORSIVA CORE (DP)
-     * Calcola il tempo minimo per finire la gara partendo da 'currentLap'.
+     * FUNZIONE RICORSIVA CORE (DP).
+     * <p>
+     * Questo metodo implementa il cuore dell'algoritmo di Programmazione Dinamica.
+     * Calcola il tempo minimo necessario per completare la gara partendo da uno stato specifico
+     * definito dal giro corrente e dalle mescole già utilizzate.
+     * </p>
+     * <p>
+     * Utilizza la tecnica della <b>Memoization</b>: prima di calcolare una soluzione, controlla
+     * se lo stato (currentLap, usedTyresMask) è già stato risolto e salvato nella mappa {@code memo}.
+     * Se è un nuovo stato, esplora tutte le possibili decisioni future (quale gomma montare e per quanti giri),
+     * sceglie quella che minimizza il tempo totale e salva la decisione migliore.
+     * </p>
      *
-     * @param currentLap Giro attuale (inizio del prossimo stint)
-     * @param usedTyresMask Bitmask che traccia quali mescole abbiamo già usato (bit 0=Soft, 1=Medium, 2=Hard)
+     * @param currentLap    Il giro attuale da cui inizia il prossimo stint (stato temporale).
+     * @param usedTyresMask Una bitmask intera che traccia lo storico delle mescole usate.
+     * (es. bit 0 = Soft, bit 1 = Medium, bit 2 = Hard).
+     * Indispensabile per verificare il regolamento delle due mescole.
+     * @param totalLaps     Il numero totale di giri della gara.
+     * @param tyres         La lista delle predizioni disponibili per le gomme.
+     * @return Il tempo minimo stimato in secondi per arrivare alla fine della gara da questo punto,
+     * oppure {@code INFINITY} se non esiste una strategia valida.
      */
     private double solve(int currentLap, int usedTyresMask, int totalLaps, List<TyrePrediction> tyres) {
         // CASO BASE: Gara finita
@@ -164,6 +226,20 @@ public class OptimizationEngine {
         return minTime;
     }
 
+    /**
+     * Ricostruisce la strategia ottinale completa a partire dai dati salvati.
+     * <p>
+     * Una volta che il metodo {@code solve()} ha popolato la mappa {@code bestDecisions},
+     * questo metodo "naviga" attraverso le decisioni migliori salvate per trasformarle
+     * in una lista ordinata di oggetti {@link Stint} comprensibile per l'utente.
+     * </p>
+     *
+     * @param startLap  Il giro di partenza della ricostruzione.
+     * @param startMask La maschera delle gomme iniziale.
+     * @param totalLaps Il numero totale di giri.
+     * @param tyres     Le informazioni sulle gomme.
+     * @return Un oggetto {@link RaceStrategy} completo, o {@code null} se il percorso è interrotto.
+     */
     // Ricostruisce la strategia seguendo le "briciole di pane" lasciate dalla DP
     private RaceStrategy reconstructStrategy(int startLap, int startMask, int totalLaps, List<TyrePrediction> tyres) {
         RaceStrategy strategy = new RaceStrategy();
@@ -198,6 +274,18 @@ public class OptimizationEngine {
         return strategy;
     }
 
+    /**
+     * Calcola il tempo totale impiegato per percorrere un certo numero di giri con una specifica gomma.
+     * <p>
+     * Simula il degrado giro per giro: al tempo base viene aggiunto il tasso di degrado
+     * accumulato per ogni giro successivo al primo.
+     * Modello lineare: Tempo(giro i) = BaseTime + (i * DegradationRate).
+     * </p>
+     *
+     * @param tyre La predizione della gomma (contiene base time e degradation rate).
+     * @param laps Il numero di giri da percorrere nello stint.
+     * @return Il tempo totale in secondi.
+     */
     private double calculateStintTime(TyrePrediction tyre, int laps) {
         double total = 0;
         double currentLapTime = tyre.getBase_time();
@@ -208,6 +296,13 @@ public class OptimizationEngine {
         return total;
     }
 
+    /**
+     * Classe helper interna (DTO) per memorizzare una decisione ottimale nel grafo DP.
+     * <p>
+     * Salva quale gomma è stata scelta, per quanti giri e quale sarà la prossima bitmask,
+     * permettendo al metodo {@code reconstructStrategy} di ripercorrere il cammino minimo.
+     * </p>
+     */
     // Classe helper interna per salvare le decisioni
     private static class StintDecision {
         String compound;
