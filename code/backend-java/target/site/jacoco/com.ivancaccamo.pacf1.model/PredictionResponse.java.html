@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PredictionResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.model</a> &gt; <span class="el_source">PredictionResponse.java</span></div><h1>PredictionResponse.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.model;
+
+import java.util.List;
+
+/**
+ * Data Transfer Object (DTO) che incapsula la risposta del servizio di Machine Learning.
+ * &lt;p&gt;
+ * Questa classe viene utilizzata per deserializzare il JSON restituito dal microservizio Python
+ * dopo una richiesta di predizione. Contiene le informazioni generali sul circuito
+ * e una lista di parametri fisici predetti per ciascuna mescola disponibile.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+<span class="nc" id="L15">public class PredictionResponse {</span>
+    private String circuit;
+    private List&lt;TyrePrediction&gt; predictions;
+
+    // Costruttori, Getter, Setter per PredictionResponse
+
+    /**
+     * Restituisce il nome del circuito a cui si riferiscono le predizioni.
+     * @return Il nome del circuito (es. &quot;Monza&quot;).
+     */
+<span class="nc" id="L25">    public String getCircuit() { return circuit; }</span>
+
+    /**
+     * Imposta il nome del circuito.
+     * @param circuit Il nome del circuito.
+     */
+<span class="nc" id="L31">    public void setCircuit(String circuit) { this.circuit = circuit; }</span>
+
+    /**
+     * Restituisce la lista delle predizioni per le diverse mescole.
+     * @return Una lista di oggetti {@link TyrePrediction}.
+     */
+<span class="nc" id="L37">    public List&lt;TyrePrediction&gt; getPredictions() { return predictions; }</span>
+
+    /**
+     * Imposta la lista delle predizioni delle mescole.
+     * @param predictions La lista di predizioni.
+     */
+<span class="nc" id="L43">    public void setPredictions(List&lt;TyrePrediction&gt; predictions) { this.predictions = predictions; }</span>
+
+    /**
+     * Classe interna statica che rappresenta i parametri fisici predetti
+     * per una singola mescola di pneumatici.
+     * &lt;p&gt;
+     * Contiene i due valori chiave necessari all'algoritmo di ottimizzazione:
+     * il tempo base (performance pura) e il tasso di degrado (usura).
+     * &lt;/p&gt;
+     */
+<span class="fc" id="L53">    public static class TyrePrediction {</span>
+        private String compound;
+        private double base_time;
+        private double degradation_rate;
+
+        // Costruttori, Getter, Setter per TyrePrediction
+
+        /**
+         * Restituisce il tipo di mescola (es. &quot;SOFT&quot;, &quot;MEDIUM&quot;, &quot;HARD&quot; o codici &quot;C1&quot;-&quot;C5&quot;).
+         * @return La stringa identificativa della mescola.
+         */
+<span class="fc" id="L64">        public String getCompound() { return compound; }</span>
+
+        /**
+         * Imposta il tipo di mescola.
+         * @param compound Il nome della mescola.
+         */
+<span class="fc" id="L70">        public void setCompound(String compound) { this.compound = compound; }</span>
+
+        /**
+         * Restituisce il tempo sul giro base stimato ($T_{base}$).
+         * &lt;p&gt;
+         * Rappresenta il tempo ideale che la vettura effettuerebbe con questa gomma
+         * nuova (usura 0), date le condizioni meteo attuali.
+         * &lt;/p&gt;
+         * @return Il tempo base in secondi.
+         */
+<span class="fc" id="L80">        public double getBase_time() { return base_time; }</span>
+
+        /**
+         * Imposta il tempo sul giro base.
+         * @param base_time Il tempo in secondi.
+         */
+<span class="fc" id="L86">        public void setBase_time(double base_time) { this.base_time = base_time; }</span>
+
+        /**
+         * Restituisce il tasso di degrado previsto ($D_{rate}$).
+         * &lt;p&gt;
+         * Indica quanti secondi di prestazione vengono persi per ogni giro percorso.
+         * Un valore più alto indica un'usura più rapida.
+         * &lt;/p&gt;
+         * @return Il fattore di degrado (secondi/giro).
+         */
+<span class="fc" id="L96">        public double getDegradation_rate() { return degradation_rate; }</span>
+
+        /**
+         * Imposta il tasso di degrado.
+         * @param degradation_rate Il degrado in secondi per giro.
+         */
+<span class="fc" id="L102">        public void setDegradation_rate(double degradation_rate) { this.degradation_rate = degradation_rate; }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

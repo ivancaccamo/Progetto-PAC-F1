@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PythonMLService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.service</a> &gt; <span class="el_source">PythonMLService.java</span></div><h1>PythonMLService.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.service;
+
+import com.ivancaccamo.pacf1.model.PredictionRequest;
+import com.ivancaccamo.pacf1.model.PredictionResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+/**
+ * Servizio responsabile della comunicazione con il microservizio esterno di Machine Learning.
+ * &lt;p&gt;
+ * Questa classe agisce come un client HTTP (o Adapter) che interfaccia il backend Java
+ * con l'applicazione Python (Flask). Si occupa di costruire la richiesta, inviare i dati
+ * ambientali e del circuito, e deserializzare la risposta JSON contenente le predizioni
+ * sul degrado gomme.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+@Service
+<span class="nc" id="L22">public class PythonMLService {</span>
+
+    /**
+     * Client HTTP fornito dal framework Spring per effettuare chiamate REST.
+     */
+    @Autowired
+    private RestTemplate restTemplate;
+
+    /**
+     * URL dell'endpoint esposto dal servizio Python Flask.
+     * Attualmente configurato per puntare all'istanza locale (localhost).
+     */
+    // Assicurati che il server Python sia acceso su questa porta!
+<span class="nc" id="L35">    private final String ML_SERVICE_URL = &quot;http://127.0.0.1:5000/predict&quot;;</span>
+
+    /**
+     * Richiede al modulo Python le previsioni di degrado per il circuito e le condizioni specificate.
+     * &lt;p&gt;
+     * Il metodo prepara il payload JSON (incluso il set standard di mescole SOFT, MEDIUM, HARD),
+     * esegue una richiesta POST sincrona e gestisce eventuali errori di comunicazione.
+     * &lt;/p&gt;
+     *
+     * @param circuit   Il nome del circuito su cui effettuare la predizione.
+     * @param airTemp   La temperatura dell'aria attuale.
+     * @param trackTemp La temperatura dell'asfalto attuale.
+     * @return Un oggetto {@link PredictionResponse} contenente i dati di degrado se la chiamata ha successo,
+     * {@code null} se il servizio Python non è raggiungibile o restituisce errore.
+     */
+    public PredictionResponse getPrediction(String circuit, double airTemp, double trackTemp) {
+<span class="nc" id="L51">        List&lt;String&gt; compounds = List.of(&quot;SOFT&quot;, &quot;MEDIUM&quot;, &quot;HARD&quot;);</span>
+        
+<span class="nc" id="L53">        PredictionRequest request = new PredictionRequest(circuit, airTemp, trackTemp, compounds);</span>
+
+        try {
+<span class="nc" id="L56">            return restTemplate.postForObject(ML_SERVICE_URL, request, PredictionResponse.class);</span>
+<span class="nc" id="L57">        } catch (Exception e) {</span>
+<span class="nc" id="L58">            System.err.println(&quot;ERRORE: Python non risponde! &quot; + e.getMessage());</span>
+<span class="nc" id="L59">            return null;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Stint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.model</a> &gt; <span class="el_source">Stint.java</span></div><h1>Stint.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.model;
+
+/**
+ * Rappresenta un singolo stint di gara.
+ * &lt;p&gt;
+ * Uno stint è definito come una sequenza continua di giri percorsi con lo stesso
+ * set di pneumatici. Questa classe traccia quale mescola viene utilizzata,
+ * il giro di inizio, il giro di fine e la durata totale in giri.
+ * È l'unità fondamentale che compone una {@link RaceStrategy}.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+public class Stint {
+
+    /**
+     * Il nome o codice della mescola utilizzata (es. &quot;SOFT&quot;, &quot;MEDIUM&quot;, &quot;HARD&quot;, &quot;C3&quot;).
+     */
+    private String compound;
+
+    /**
+     * Il numero del giro in cui inizia lo stint (es. dopo un pit-stop o alla partenza).
+     */
+    private int startLap;
+
+    /**
+     * Il numero del giro in cui termina lo stint (es. rientro ai box o bandiera a scacchi).
+     */
+    private int endLap;
+
+    /**
+     * La durata dello stint espressa in numero di giri percorsi.
+     */
+    private int laps;
+
+    /**
+     * Costruttore vuoto.
+     * Necessario per la serializzazione/deserializzazione JSON e per l'uso con framework.
+     */
+    // Costruttore vuoto
+<span class="nc" id="L41">    public Stint() {}</span>
+
+    /**
+     * Costruttore completo per inizializzare un nuovo stint.
+     * &lt;p&gt;
+     * Calcola automaticamente il numero di giri (`laps`) basandosi sulla differenza
+     * tra il giro di fine e quello di inizio.
+     * &lt;/p&gt;
+     *
+     * @param compound La mescola utilizzata.
+     * @param startLap Il giro di inizio.
+     * @param endLap   Il giro di fine.
+     */
+    // Costruttore completo
+<span class="fc" id="L55">    public Stint(String compound, int startLap, int endLap) {</span>
+<span class="fc" id="L56">        this.compound = compound;</span>
+<span class="fc" id="L57">        this.startLap = startLap;</span>
+<span class="fc" id="L58">        this.endLap = endLap;</span>
+<span class="fc" id="L59">        this.laps = endLap - startLap + 1;</span>
+<span class="fc" id="L60">    }</span>
+
+    // Getters e Setters
+
+    /**
+     * Restituisce la mescola dello stint.
+     * @return Il nome della mescola.
+     */
+<span class="nc" id="L68">    public String getCompound() { return compound; }</span>
+
+    /**
+     * Imposta la mescola dello stint.
+     * @param compound Il nome della mescola.
+     */
+<span class="nc" id="L74">    public void setCompound(String compound) { this.compound = compound; }</span>
+
+    /**
+     * Restituisce il giro di inizio dello stint.
+     * @return Il numero del giro.
+     */
+<span class="nc" id="L80">    public int getStartLap() { return startLap; }</span>
+
+    /**
+     * Imposta il giro di inizio.
+     * @param startLap Il numero del giro.
+     */
+<span class="nc" id="L86">    public void setStartLap(int startLap) { this.startLap = startLap; }</span>
+
+    /**
+     * Restituisce il giro di fine dello stint.
+     * @return Il numero del giro.
+     */
+<span class="nc" id="L92">    public int getEndLap() { return endLap; }</span>
+
+    /**
+     * Imposta il giro di fine.
+     * @param endLap Il numero del giro.
+     */
+<span class="nc" id="L98">    public void setEndLap(int endLap) { this.endLap = endLap; }</span>
+
+    /**
+     * Restituisce la durata totale dello stint.
+     * @return Il numero di giri.
+     */
+<span class="fc" id="L104">    public int getLaps() { return laps; }</span>
+
+    /**
+     * Imposta la durata dello stint.
+     * @param laps Il numero di giri.
+     */
+<span class="nc" id="L110">    public void setLaps(int laps) { this.laps = laps; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
