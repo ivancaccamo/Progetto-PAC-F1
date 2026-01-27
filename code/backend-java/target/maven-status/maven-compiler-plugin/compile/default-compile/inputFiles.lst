@@ -1,10 +1,10 @@
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\PredictionResponse.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\RaceStrategy.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\service\PythonMLService.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\Stint.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\SavedStrategy.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\App.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\repository\StrategyRepository.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\service\OptimizationEngine.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\PredictionRequest.java
-C:\Users\ivcac\Desktop\Pac progetto\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\controller\StrategyController.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\SavedStrategy.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\repository\StrategyRepository.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\controller\StrategyController.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\PredictionRequest.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\PredictionResponse.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\Stint.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\service\OptimizationEngine.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\App.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\service\PythonMLService.java
+C:\Users\rossi\Desktop\UNI\LAUREA MAGISTRALE\I ANNO\I SEMESTRE\PROGETTAZIONE, ALGORITMI E COMPUTABILITA\PROGETTO\Repo\Progetto-PAC-F1\CODE\backend-java\src\main\java\com\ivancaccamo\pacf1\model\RaceStrategy.java
