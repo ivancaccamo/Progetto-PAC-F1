@@ -59,17 +59,17 @@ Se preferisci avviare i servizi manualmente, segui questi passaggi in due termin
 ### 1. Avvio Microservizio Python (ML)
 Questo modulo gestisce le predizioni di Machine Learning.
 
-# Spostati nella cartella del modulo Python
+Spostati nella cartella del modulo Python
 cd code/ml-python
 
-# Installa le dipendenze necessarie
+Installa le dipendenze necessarie
 pip install -r requirements.txt
 
-# Avvia il server Flask
+Avvia il server Flask
 python app.py
 Il servizio sarà attivo su: http://localhost:5000
 
-2. Avvio Backend Java (App)
+### 2. Avvio Backend Java (App)
 Questo modulo gestisce la logica di business, l'algoritmo di ottimizzazione e l'interfaccia web.
 
 Bash
