@@ -59,7 +59,6 @@ Se preferisci avviare i servizi manualmente, segui questi passaggi in due termin
 ### 1. Avvio Microservizio Python (ML)
 Questo modulo gestisce le predizioni di Machine Learning.
 
-```bash
 # Spostati nella cartella del modulo Python
 cd code/ml-python
 
