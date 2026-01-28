@@ -57,7 +57,7 @@ public class PredictionRequest {
      * @param track_temp   La temperatura della pista.
      * @param compounds    La lista delle mescole da testare.
      */
-    // COSTRUTTORE CON TUTTI GLI ARGOMENTI (Quello che stavi provando a usare)
+    // COSTRUTTORE CON TUTTI GLI ARGOMENTI
     public PredictionRequest(String circuit_name, double air_temp, double track_temp, List<String> compounds) {
         this.circuit_name = circuit_name;
         this.air_temp = air_temp;
@@ -65,7 +65,7 @@ public class PredictionRequest {
         this.compounds = compounds;
     }
 
-    // GETTERS & SETTERS (Generati a mano per sicurezza)
+    // GETTERS & SETTERS
 
     /**
      * Restituisce il nome del circuito impostato per la richiesta.

@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<JDepend>
+    <Packages>
+
+        <Package name="com.ivancaccamo.pacf1">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>3</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="App.java">
+                    com.ivancaccamo.pacf1.App
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>org.springframework.boot</Package>
+                <Package>org.springframework.web.client</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ivancaccamo.pacf1.controller">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>5</Ce>
+                <A>0</A>
+                <I>1</I>
+                <D>0</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="StrategyController.java">
+                    com.ivancaccamo.pacf1.controller.StrategyController
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>com.ivancaccamo.pacf1.model</Package>
+                <Package>com.ivancaccamo.pacf1.repository</Package>
+                <Package>com.ivancaccamo.pacf1.service</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ivancaccamo.pacf1.model">
+            <Stats>
+                <TotalClasses>6</TotalClasses>
+                <ConcreteClasses>6</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>4</Ce>
+                <A>0</A>
+                <I>0.8</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="PredictionRequest.java">
+                    com.ivancaccamo.pacf1.model.PredictionRequest
+                </Class>
+                <Class sourceFile="PredictionResponse.java">
+                    com.ivancaccamo.pacf1.model.PredictionResponse
+                </Class>
+                <Class sourceFile="PredictionResponse.java">
+                    com.ivancaccamo.pacf1.model.PredictionResponse$TyrePrediction
+                </Class>
+                <Class sourceFile="RaceStrategy.java">
+                    com.ivancaccamo.pacf1.model.RaceStrategy
+                </Class>
+                <Class sourceFile="SavedStrategy.java">
+                    com.ivancaccamo.pacf1.model.SavedStrategy
+                </Class>
+                <Class sourceFile="Stint.java">
+                    com.ivancaccamo.pacf1.model.Stint
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.time</Package>
+                <Package>java.time.format</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ivancaccamo.pacf1.controller</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ivancaccamo.pacf1.repository">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>0</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>2</Ce>
+                <A>1</A>
+                <I>0.67</I>
+                <D>0.67</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="StrategyRepository.java">
+                    com.ivancaccamo.pacf1.repository.StrategyRepository
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>org.springframework.data.jpa.repository</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ivancaccamo.pacf1.controller</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="com.ivancaccamo.pacf1.service">
+            <Stats>
+                <TotalClasses>1</TotalClasses>
+                <ConcreteClasses>1</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>1</Ce>
+                <A>0</A>
+                <I>0.5</I>
+                <D>0.5</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="OptimizationEngine.java">
+                    com.ivancaccamo.pacf1.service.OptimizationEngine$StintDecision
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>com.ivancaccamo.pacf1.controller</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="java.lang">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.time">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.time.format">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.springframework.boot">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.springframework.data.jpa.repository">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.springframework.web.client">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+    </Packages>
+
+    <Cycles>
+    </Cycles>
+</JDepend>
