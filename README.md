@@ -72,31 +72,55 @@ Il servizio sarà attivo su: http://localhost:5000
 ### 2. Avvio Backend Java (App)
 Questo modulo gestisce la logica di business, l'algoritmo di ottimizzazione e l'interfaccia web.
 
-Bash
-
-# Apri un NUOVO terminale e spostati nella cartella Java
+Apri un NUOVO terminale e spostati nella cartella Java
 cd code/backend-java
 
-# Avvia l'applicazione con Maven
+Avvia l'applicazione con Maven
 mvn spring-boot:run
 L'applicazione sarà attiva su: http://localhost:8080
 
-Struttura del Progetto
-Plaintext
+## 🧪 Testing e Qualità Software
 
-Progetto-PAC-F1/
-├── code/
-│   ├── backend-java/       # Codice sorgente Java (Spring Boot)
-│   │   ├── src/main/java   # Controller, Service, Model, Repository
-│   │   ├── src/main/resources/static  # Frontend (HTML/CSS/JS)
-│   │   └── pom.xml         # Dipendenze Maven
-│   │
-│   └── ml-python/          # Codice sorgente Python
-│       ├── dataset/        # Dati di training (CSV)
-│       ├── model/          # Modelli .pkl serializzati
-│       ├── app.py          # Server Flask (API)
-│       └── requirements.txt
-│
-├── docs/                   # Documentazione di progetto (LaTeX, PDF)
-├── img/                    # Screenshot e diagrammi per i report
-└── start.bat               # Script di avvio automatico (Windows)
+Il progetto è stato validato attraverso diverse metodologie di testing per garantire affidabilità, robustezza e manutenibilità del codice:
+
+* **Unit Testing (JUnit 5):**
+    È stata sviluppata una suite di test unitari per verificare la logica di business del backend, con particolare attenzione al core algoritmico (`OptimizationEngine`).
+    Per eseguire i test automatizzati:
+    ```
+    mvn test
+    ```
+
+* **API Testing (Postman):**
+    La corretta esposizione degli endpoint REST e l'integrazione tra il Backend Java e il servizio Python sono state verificate tramite collection di test Postman (verifica status code 200, payload JSON corretti e gestione errori).
+
+* **Analisi Statica (JDepend & Linting):**
+    * **JDepend:** Utilizzato per analizzare le metriche architetturali, garantendo l'assenza di dipendenze cicliche e un corretto bilanciamento tra astrattezza e instabilità dei package.
+    * **Linting:** Analisi statica integrata per assicurare la conformità agli standard di *Clean Code* (naming convention, rimozione codice morto).
+
+* **Code Coverage (JaCoCo):**
+    L'analisi della copertura del codice ha raggiunto livelli >90% sulle componenti critiche del Service layer. Per generare il report di copertura:
+    ```
+    mvn jacoco:report
+    ```
+
+---
+
+## 👥 Autori
+
+Progetto realizzato dal **Team SPS-F1**:
+
+* **Andrea Birolini** (Matr. *[Inserisci Matricola]*)
+* **Ivan Caccamo** (Matr. *[Inserisci Matricola]*)
+* **[Nome Terzo Membro]** (Matr. *[Inserisci Matricola]*)
+
+---
+
+### 🎓 Riferimenti Accademici
+
+**Università degli Studi di Bergamo**
+Dipartimento di Ingegneria Gestionale, dell'Informazione e della Produzione
+Corso di Laurea Magistrale in Ingegneria Informatica
+
+**Corso:** Progettazione, Algoritmi e Computabilità (38090-MOD1)
+**Docente:** Prof.ssa Patrizia Scandurra
+**Anno Accademico:** 2025/2026
