@@ -1,0 +1,451 @@
+/*
+ * STILE GENERALE & TEMA (DARK MODE / F1)
+ * Impostazioni base per il layout scuro e la tipografia.
+ * Utilizziamo uno sfondo molto scuro (#15151e) per far risaltare gli accenti rossi.
+ */
+body {
+    background-color: #15151e;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+}
+
+/* Font 'Orbitron' utilizzato per titoli e logo per richiamare
+   lo stile dei timer ufficiali e della grafica televisiva F1 */
+.logo-text {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+/*
+ * PANNELLO CONTROLLI (SIDEBAR)
+ * L'area a sinistra dove l'utente inserisce i dati di simulazione.
+ */
+.control-panel {
+    background-color: #1e1e29; /* Leggermente più chiaro del body per creare profondità */
+    border-right: 2px solid #333;
+    height: 90vh;
+    border-radius: 10px;
+}
+
+/* Override degli input standard di Bootstrap per adattarli al tema scuro */
+.f1-input {
+    background-color: #2b2b3b;
+    border: 1px solid #444;
+    color: #fff;
+}
+
+/* Stato Focus: Glow rosso quando l'utente seleziona un campo,
+   per dare un feedback visivo immediato in stile "Racing" */
+.f1-input:focus {
+    background-color: #323245;
+    color: #fff;
+    border-color: #e10600; /* Rosso Ferrari/F1 */
+    box-shadow: 0 0 5px rgba(225, 6, 0, 0.5);
+}
+
+/*
+ * BOTTONE AZIONE PRINCIPALE ("CALCOLA")
+ * Deve essere l'elemento più evidente della UI.
+ */
+.btn-calculate {
+    background-color: #e10600;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    padding: 15px;
+    letter-spacing: 1px;
+    transition: all 0.3s; /* Animazione fluida per l'hover */
+}
+
+.btn-calculate:hover {
+    background-color: #ff0800;
+    transform: scale(1.02); /* Leggero effetto "zoom" per feedback tattile */
+}
+
+/*
+ * CARD STRATEGIE (RISULTATI)
+ * I blocchi che contengono le opzioni di gara calcolate.
+ */
+.strategy-card {
+    background-color: #252530;
+    border-left: 5px solid #e10600; /* Bordo colorato a sinistra per categorizzare */
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    transition: transform 0.2s;
+}
+
+/* Micro-interazione: la card si sposta leggermente a destra quando ci passi sopra */
+.strategy-card:hover {
+    transform: translateX(5px);
+    background-color: #2a2a36;
+}
+
+.strategy-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #ccc;
+}
+
+.total-time {
+    font-size: 2.0em;
+    font-weight: bold;
+    color: #e10600; /* Enfasi sul dato più importante: il tempo totale */
+}
+
+/*
+ * COLORI GOMME (STANDARD PIRELLI)
+ * Mapping visivo immediato per le mescole.
+ */
+.badge-soft { background-color: #ff3b30; color: #000; }   /* Rossa - Soft */
+.badge-medium { background-color: #ffcc00; color: #000; } /* Gialla - Medium */
+.badge-hard { background-color: #fff; color: #000; border: 1px solid #ccc; } /* Bianca - Hard */
+
+/*
+ * VISUALIZZAZIONE TRACCIATO
+ * Il contenitore che ospita la mappa del circuito e le icone.
+ */
+.circuit-visualization {
+    background-color: #1a1a23;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.circuit-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #ccc;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+}
+
+/*
+ * CONTAINER MAPPA RESPONSIVO
+ * Utilizziamo il trucco del padding-bottom percentuale per forzare un aspect-ratio
+ * specifico (2:1) in modo che la mappa non si deformi su schermi diversi.
+ */
+.track-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 50%; /* Aspect ratio hack: altezza è il 50% della larghezza */
+    background: linear-gradient(135deg, #1e1e2e 0%, #1a1a2f 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+/*
+ * GESTIONE LAYOUT TRACK & OVERLAY
+ * Posizionamento dell'immagine del circuito e del layer sovrapposto per gli elementi dinamici.
+ */
+
+/* QUI il riquadro interno dove sta l'immagine del circuito */
+.track {
+    position: absolute;
+    /* margine uniforme dentro il container (8% tutto attorno) per dare respiro al tracciato */
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    bottom: 8%;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;   /* Fondamentale: tutta l'immagine visibile, scala senza deformare */
+}
+
+/* overlay per eventuali elementi sopra la pista (car, marker pit, ecc.) */
+.overlay-track {
+    position: absolute;
+    inset: 0; /* Scorciatoia per top:0, right:0, bottom:0, left:0 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Importante: permette al mouse di passare "attraverso" questo layer */
+}
+
+/*
+ * LISTA STRATEGIE (CARD COMPATTE)
+ * Stili per la visualizzazione sintetica delle opzioni calcolate.
+ */
+.strategy-list { margin-top: 8px; }
+
+.strategy-small {
+    /* Eredita il look della card principale ma in versione ridotta */
+    background-color: #252530;
+    border-left: 5px solid #e10600; /* Identità visiva costante (rosso F1) */
+    padding: 16px;
+    border-radius: 7px;
+    transition: transform 0.25s;
+    min-height: 200px; /* Altezza minima per allineamento visivo */
+}
+
+.strategy-small .strategy-title { font-size: 0.85em; color: #cfcfd6; }
+.strategy-small .total-time { font-size: 1.05em; }
+
+/* Effetto Hover: sposta leggermente la card a destra */
+.strategy-small:hover { transform: translateX(4px); background-color: #2a2a36; }
+
+/*
+ * MINIATURA CIRCUITO
+ * Stile per la piccola immagine del tracciato mostrata a sinistra nella card.
+ */
+.circuit-thumb {
+    width: 122px;
+    height: 83px;
+    border-radius: 12px;
+    object-fit: cover; /* Taglia l'immagine per riempire il box senza deformarla */
+    border: 1px solid rgba(255,255,255,0.06);
+    background-color: #0f0f14;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Layout orizzontale per le small card con miniatura (Flexbox fix) */
+.strategy-small.d-flex.align-items-center img.circuit-thumb {
+    flex: 0 0 auto; /* Impedisce all'immagine di schiacciarsi */
+}
+
+.strategy-small .progress { height: 18px; }
+
+/*
+ * MODALE DETTAGLIO (POPUP FULLSCREEN)
+ * L'overlay scuro che appare quando si clicca su una strategia per vedere i dettagli.
+ */
+.strategy-detail-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7); /* Backdrop scuro semi-trasparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Assicura che stia sopra a tutto il resto */
+}
+
+/* Il contenitore della modale vera e propria */
+.strategy-detail-card {
+    width: 90%;
+    height: auto;
+    max-width: 700px;
+    background: #15151e;
+    border: 1px solid #333;
+    padding: 18px;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.detail-circuit .circuit-visualization { margin: 0; }
+
+.detail-progress .progress { box-shadow: none; }
+
+/*
+ * CLASSI DI UTILITÀ COLORI
+ * Mappatura colori mescole per le barre di progresso (usate da JS).
+ */
+.compound-soft { background-color: #ff3b30 !important; }
+.compound-medium { background-color: #ffcc00 !important; }
+.compound-hard { background-color: #ffffff !important; color: #000; }
+
+/*
+ * ANIMAZIONI PIT STOP
+ * Effetti visivi per enfatizzare il momento della sosta nella simulazione.
+ */
+
+/* Effetto lampeggiante per il testo dello status */
+.pit-blink {
+    animation: pitBlink 0.8s ease-in-out infinite;
+    color: #ffcc00 !important;
+    font-weight: 700;
+}
+
+/* Effetto pulsante (Glow) per la barra di progresso */
+.progress-pulse {
+    box-shadow: 0 0 20px rgba(255,204,0,0.9), 0 0 24px rgba(255,204,0,0.5);
+}
+
+/* Definizione keyframes per il lampeggio */
+@keyframes pitBlink {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.05); } /* Diventa trasparente e si ingrandisce */
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/*
+ * DASHBOARD GIRI (PARTE BASSA DELLA MODALE)
+ * Layout Flexbox per allineare i contatori (Giro corrente, Gomma, Soste)
+ * in modo ordinato e leggibile.
+ */
+.lap-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #1e1e29;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.lap-counter-item {
+    text-align: center;
+    flex: 1; /* Distribuisce lo spazio equamente */
+}
+
+/* Stile numeri dashboard: Font tecnico e colore rosso per impatto visivo */
+.lap-counter-item .lap-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #e10600;
+}
+
+.lap-counter-item .lap-status {
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* Utility per nascondere i marker statici "PIT" sul tracciato, 
+   preferendo magari la visualizzazione dinamica o per pulizia layout */
+.pit-stop-zone {
+    display: none !important;
+}
+
+/*
+ * TOAST NOTIFICHE (STILE F1 / GLASSMORPHISM)
+ * Sostituzione dello stile standard Bootstrap per le notifiche a comparsa.
+ */
+.f1-toast {
+    background-color: rgba(20, 20, 30, 0.95); /* Scuro e leggermente trasparente */
+    backdrop-filter: blur(10px); /* Effetto sfocatura dietro (Glassmorphism) */
+    color: #fff;
+    border-left: 5px solid #e10600; /* La striscia rossa Ferrari a sinistra */
+    border-radius: 4px; /* Angoli poco arrotondati, più tecnici */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(225, 6, 0, 0.2); /* Ombra con leggero bagliore rosso */
+    min-width: 350px;
+}
+
+.f1-toast-title {
+    font-family: 'Orbitron', sans-serif; /* Font tecnico per i titoli */
+    letter-spacing: 1px;
+    color: #e10600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+
+/* Animazione di entrata personalizzata (Slide da destra con rimbalzo) */
+.toast.show {
+    display: block;
+    opacity: 1;
+    animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effetto elastico */
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/*
+ * PULSANTE "SALVA" (CARD STRATEGIE)
+ * Stile outline che si riempie all'hover con effetto neon.
+ */
+.btn-save-f1 {
+    background-color: transparent;
+    border: 1px solid #e10600;
+    color: #e10600;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 4px; /* Angoli tecnici, poco arrotondati */
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-save-f1:hover {
+    background-color: #e10600;
+    color: white;
+    box-shadow: 0 0 15px rgba(225, 6, 0, 0.6); /* Effetto Neon Glow */
+    transform: translateY(-2px); /* Leggero sollevamento 3D */
+}
+
+/* Animazione icona floppy disk all'hover del bottone */
+.btn-save-f1 svg {
+    fill: currentColor; /* L'icona eredita il colore del testo */
+    transition: transform 0.3s;
+}
+
+.btn-save-f1:hover svg {
+    transform: scale(1.1); /* L'icona si ingrandisce leggermente */
+}
+
+/*
+ * PULSANTE ARCHIVIO (HEADER)
+ * Stile più sobrio (grigio/bianco) per la navigazione superiore.
+ */
+.btn-archive-f1 {
+    background-color: transparent;
+    border: 1px solid #666;
+    color: #ccc;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.btn-archive-f1:hover {
+    border-color: #fff;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-archive-f1 svg {
+    fill: currentColor;
+}
+
+/* Variante Toast Verde (Successo) */
+/* Override per i feedback positivi (es. "Salvataggio riuscito").
+   Cambiamo il colore d'accento dal rosso default al verde standard (#28a745)
+   per comunicare immediatamente il successo dell'operazione. */
+.f1-toast-success {
+    border-left-color: #28a745 !important; /* Verde F1 */
+}
+
+.f1-toast-success .f1-toast-title {
+    color: #28a745 !important;
+}
+
+/* Stile personalizzato per la Modale (es. Conferma Eliminazione) */
+.f1-modal {
+    /* Ombra doppia composita:
+       1. Ombra nera profonda (0 10px 40px) per staccare la modale dallo sfondo.
+       2. Ombra rossa diffusa (0 0 20px) per creare un effetto "glow" di avvertimento/pericolo. */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(225, 6, 0, 0.4);
+    border-radius: 6px;
+}
+
+/* Tipografia header modale: mantiene il font "tecnico" del sito per coerenza */
+.f1-modal .modal-title {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}

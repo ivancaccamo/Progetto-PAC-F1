@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SavedStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.model</a> &gt; <span class="el_source">SavedStrategy.java</span></div><h1>SavedStrategy.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+/**
+ * Entità JPA che rappresenta una strategia di gara salvata nel database.
+ * &lt;p&gt;
+ * Questa classe mappa la tabella delle strategie archiviate. Viene utilizzata
+ * per persistere i risultati delle simulazioni che l'utente decide di conservare
+ * nello storico per consultazioni future.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+@Entity
+public class SavedStrategy {
+
+    /**
+     * Identificativo univoco (Primary Key) della strategia salvata.
+     * Generato automaticamente dal database.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * Il nome del circuito associato alla strategia (es. &quot;Bahrain Grand Prix&quot;).
+     */
+    private String circuit;
+
+    /**
+     * Il tempo totale stimato di gara in secondi.
+     */
+    private double totalTime;
+
+    /**
+     * Il numero di soste ai box previste.
+     */
+    private int pitStops;
+
+    /**
+     * Una descrizione testuale sintetica della sequenza di stint.
+     * Esempio: &quot;Soft (18 giri) -&gt; Medium (25 giri) -&gt; Hard (14 giri)&quot;.
+     * Utile per la visualizzazione rapida nell'archivio senza dover ricostruire l'oggetto completo.
+     */
+    private String stintsDescription;
+
+    /**
+     * Timestamp di creazione del record, formattato come stringa &quot;dd-MM-yyyy HH:mm&quot;.
+     */
+    private String createdAt;
+
+    /**
+     * Costruttore vuoto richiesto dalle specifiche JPA.
+     */
+<span class="nc" id="L58">    public SavedStrategy() {</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Costruttore per creare una nuova istanza di strategia da salvare.
+     *
+     * @param circuit           Il nome del circuito.
+     * @param totalTime         Il tempo totale in secondi.
+     * @param pitStops          Il numero di soste.
+     * @param stintsDescription La descrizione leggibile degli stint.
+     */
+<span class="nc" id="L69">    public SavedStrategy(String circuit, double totalTime, int pitStops, String stintsDescription) {</span>
+<span class="nc" id="L70">        this.circuit = circuit;</span>
+<span class="nc" id="L71">        this.totalTime = totalTime;</span>
+<span class="nc" id="L72">        this.pitStops = pitStops;</span>
+<span class="nc" id="L73">        this.stintsDescription = stintsDescription;</span>
+<span class="nc" id="L74">        this.createdAt = LocalDateTime.now()</span>
+<span class="nc" id="L75">                .format(DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy HH:mm&quot;));</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Metodo di callback JPA eseguito prima della persistenza dell'entità.
+     * &lt;p&gt;
+     * Garantisce che il campo {@code createdAt} venga valorizzato con la data
+     * e l'ora correnti se non è stato già impostato manualmente.
+     * &lt;/p&gt;
+     */
+    @PrePersist
+    public void onCreate() {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (this.createdAt == null) {</span>
+<span class="nc" id="L88">            this.createdAt = LocalDateTime.now()</span>
+<span class="nc" id="L89">                    .format(DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy HH:mm&quot;));</span>
+        }
+<span class="nc" id="L91">    }</span>
+
+    // ---------- GETTER &amp; SETTER ----------
+
+    /**
+     * Restituisce l'ID del record.
+     * @return L'identificativo univoco.
+     */
+    public Long getId() {
+<span class="nc" id="L100">        return id;</span>
+    }
+
+    /**
+     * Imposta l'ID del record.
+     * @param id L'identificativo univoco.
+     */
+    public void setId(Long id) {
+<span class="nc" id="L108">        this.id = id;</span>
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Restituisce il nome del circuito.
+     * @return Il nome del circuito.
+     */
+    public String getCircuit() {
+<span class="nc" id="L116">        return circuit;</span>
+    }
+
+    /**
+     * Imposta il nome del circuito.
+     * @param circuit Il nome del circuito.
+     */
+    public void setCircuit(String circuit) {
+<span class="nc" id="L124">        this.circuit = circuit;</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Restituisce il tempo totale di gara salvato.
+     * @return Il tempo in secondi.
+     */
+    public double getTotalTime() {
+<span class="nc" id="L132">        return totalTime;</span>
+    }
+
+    /**
+     * Imposta il tempo totale di gara.
+     * @param totalTime Il tempo in secondi.
+     */
+    public void setTotalTime(double totalTime) {
+<span class="nc" id="L140">        this.totalTime = totalTime;</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Restituisce il numero di pit-stop salvati.
+     * @return Il numero di soste.
+     */
+    public int getPitStops() {
+<span class="nc" id="L148">        return pitStops;</span>
+    }
+
+    /**
+     * Imposta il numero di pit-stop.
+     * @param pitStops Il numero di soste.
+     */
+    public void setPitStops(int pitStops) {
+<span class="nc" id="L156">        this.pitStops = pitStops;</span>
+<span class="nc" id="L157">    }</span>
+
+    /**
+     * Restituisce la descrizione testuale degli stint.
+     * @return La stringa descrittiva.
+     */
+    public String getStintsDescription() {
+<span class="nc" id="L164">        return stintsDescription;</span>
+    }
+
+    /**
+     * Imposta la descrizione testuale degli stint.
+     * @param stintsDescription La stringa descrittiva.
+     */
+    public void setStintsDescription(String stintsDescription) {
+<span class="nc" id="L172">        this.stintsDescription = stintsDescription;</span>
+<span class="nc" id="L173">    }</span>
+
+    /**
+     * Restituisce la data di creazione formattata.
+     * @return La data come stringa.
+     */
+    public String getCreatedAt() {
+<span class="nc" id="L180">        return createdAt;</span>
+    }
+
+    /**
+     * Imposta la data di creazione.
+     * @param createdAt La data formattata come stringa.
+     */
+    public void setCreatedAt(String createdAt) {
+<span class="nc" id="L188">        this.createdAt = createdAt;</span>
+<span class="nc" id="L189">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

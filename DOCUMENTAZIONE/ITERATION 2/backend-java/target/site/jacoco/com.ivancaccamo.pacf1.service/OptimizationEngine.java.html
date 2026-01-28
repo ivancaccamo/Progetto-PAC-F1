@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OptimizationEngine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.service</a> &gt; <span class="el_source">OptimizationEngine.java</span></div><h1>OptimizationEngine.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.service;
+
+import com.ivancaccamo.pacf1.model.PredictionResponse.TyrePrediction;
+import com.ivancaccamo.pacf1.model.RaceStrategy;
+import com.ivancaccamo.pacf1.model.Stint;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+/**
+ * Motore algoritmico principale del sistema SPS-F1.
+ * &lt;p&gt;
+ * Questa classe implementa la logica di ottimizzazione per determinare la strategia di gara ideale.
+ * Utilizza un approccio di &lt;b&gt;Programmazione Dinamica (DP)&lt;/b&gt; con Memoization per esplorare
+ * l'albero delle possibili decisioni (mescola, lunghezza stint) e trovare il cammino minimo
+ * in termini di tempo totale.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * L'algoritmo tiene conto del degrado degli pneumatici, del tempo perso in pit-lane e
+ * dei vincoli regolamentari (obbligo di usare almeno due mescole diverse).
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+@Service
+<span class="fc" id="L26">public class OptimizationEngine {</span>
+
+    /**
+     * Tempo medio perso per effettuare un pit-stop (percorrenza pit-lane + cambio gomme).
+     * Valore fisso stimato a 20.0 secondi.
+     */
+    private static final double PIT_STOP_LOSS = 20.0;
+
+    /**
+     * Valore sentinella per indicare un tempo o un costo infinito (strategia non valida).
+     */
+    private static final double INFINITY = 1e9; // Un numero grandissimo
+
+    /**
+     * Cache per la Memoization.
+     * Mappa uno stato univoco (giro corrente + maschera gomme usate) al miglior tempo ottenibile da quello stato in poi.
+     * Chiave: &quot;giroCorrente-mascheraGommeUsate&quot; -&gt; Valore: Miglior Tempo
+     */
+    // Cache per la Memoization: salva i risultati parziali per non ricalcolarli
+    // Chiave: &quot;giroCorrente-mascheraGommeUsate&quot; -&gt; Valore: Miglior Tempo
+<span class="fc" id="L46">    private Map&lt;String, Double&gt; memo = new HashMap&lt;&gt;();</span>
+    
+    /**
+     * Mappa utilizzata per tracciare le decisioni ottimali prese ad ogni passo.
+     * Fondamentale per la fase di backtracking che ricostruisce la lista degli stint finali.
+     */
+    // Per ricostruire la strategia alla fine
+<span class="fc" id="L53">    private Map&lt;String, StintDecision&gt; bestDecisions = new HashMap&lt;&gt;();</span>
+
+    /**
+     * Metodo principale per il calcolo delle strategie.
+     * &lt;p&gt;
+     * Esegue una ricerca esaustiva intelligente per trovare le Top 3 strategie migliori.
+     * Invece di lanciare una singola esecuzione DP, itera su tutte le possibili combinazioni
+     * di &quot;Primo Stint&quot; (mescola iniziale e durata) e delega alla DP l'ottimizzazione del resto della gara.
+     * Questo approccio ibrido permette di diversificare i risultati e trovare alternative valide
+     * (es. strategia a 1 sosta vs 2 soste).
+     * &lt;/p&gt;
+     *
+     * @param totalLaps Il numero totale di giri della gara.
+     * @param tyres     La lista delle predizioni di degrado per le mescole disponibili.
+     * @return Una lista contenente le migliori 3 strategie uniche, ordinate per tempo totale crescente.
+     */
+    public List&lt;RaceStrategy&gt; calculateTop3Strategies(int totalLaps, List&lt;TyrePrediction&gt; tyres) {
+<span class="fc" id="L70">        System.out.println(&quot;--- AVVIO ALGORITMO DP (N SOSTE) - RICERCA ESAUSTIVA TOP 3 ---&quot;);</span>
+        
+<span class="fc" id="L72">        List&lt;RaceStrategy&gt; candidates = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (tyres.isEmpty()) return candidates;</span>
+
+        // Invece di chiedere subito &quot;qual è il meglio assoluto&quot;,
+        // proviamo manualmente ogni possibile PRIMO STINT (Mescola + Durata)
+        // e chiediamo alla DP di risolvere ottimamente il RESTO della gara.
+        
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (int i = 0; i &lt; tyres.size(); i++) {</span>
+<span class="fc" id="L80">            TyrePrediction startTyre = tyres.get(i);</span>
+<span class="fc" id="L81">            int startMask = (1 &lt;&lt; i); // Maschera con la prima gomma usata</span>
+
+            // Proviamo diverse durate per il primo stint (es. da 1 giro fino a metà gara)
+            // Usiamo uno step di 3 giri per avere varietà senza troppi calcoli
+<span class="fc" id="L85">            int minStint = Math.max(2, (int)(totalLaps * 0.15));</span>
+<span class="fc" id="L86">            int maxStint = Math.max(minStint + 2, totalLaps - 2);</span>
+<span class="fc" id="L87">            int step = Math.max(1, totalLaps / 15); // Step adattivo</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            for (int firstStintLaps = 1; firstStintLaps &lt; totalLaps - 1; firstStintLaps++) {</span>
+                
+                // IMPORTANTE: Puliamo la memoria per ogni tentativo, altrimenti riusa calcoli vecchi
+<span class="fc" id="L92">                memo.clear();</span>
+<span class="fc" id="L93">                bestDecisions.clear();</span>
+
+                // Calcoliamo il costo del primo stint manuale
+<span class="fc" id="L96">                double firstStintTime = calculateStintTime(startTyre, firstStintLaps);</span>
+
+                // Chiediamo alla DP: &quot;Qual è il tempo minimo per finire la gara da qui in poi?&quot;
+                // Nota: solve() aggiungerà automaticamente il costo del pit stop iniziale
+<span class="fc" id="L100">                double timeRest = solve(firstStintLaps, startMask, totalLaps, tyres);</span>
+
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                if (timeRest &lt; INFINITY) {</span>
+                    // Ricostruiamo la strategia per la seconda parte
+<span class="fc" id="L104">                    RaceStrategy restStrategy = reconstructStrategy(firstStintLaps, startMask, totalLaps, tyres);</span>
+                    
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                    if (restStrategy != null) {</span>
+                        // Creiamo la strategia completa unendo Primo Stint + Resto
+<span class="fc" id="L108">                        RaceStrategy fullStrategy = new RaceStrategy();</span>
+                        
+                        // Tempo totale = Primo Stint + Resto (che include i pit stop successivi)
+<span class="fc" id="L111">                        fullStrategy.setTotalTime(firstStintTime + timeRest);</span>
+                        
+                        // Aggiungiamo il primo stint in testa alla lista
+<span class="fc" id="L114">                        fullStrategy.getStints().add(new Stint(startTyre.getCompound(), 1, firstStintLaps));</span>
+<span class="fc" id="L115">                        fullStrategy.getStints().addAll(restStrategy.getStints());</span>
+                        
+                        // Calcoliamo le soste (Numero di stint - 1)
+<span class="fc" id="L118">                        fullStrategy.setPitStops(fullStrategy.getStints().size() - 1);</span>
+
+<span class="fc" id="L120">                        candidates.add(fullStrategy);</span>
+                    }
+                }
+            }
+        }
+
+        // 3. ORDINIAMO E FILTRIAMO
+        // Ordiniamo per tempo totale crescente
+<span class="fc" id="L128">        candidates.sort(Comparator.comparingDouble(RaceStrategy::getTotalTime));</span>
+
+        // Rimuoviamo duplicati (strategie con lo stesso tempo quasi identico)
+<span class="fc" id="L131">        List&lt;RaceStrategy&gt; uniqueResults = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L132">        Set&lt;Integer&gt; seenTimes = new HashSet&lt;&gt;(); // Usiamo int per arrotondare e filtrare</span>
+
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        for (RaceStrategy s : candidates) {</span>
+<span class="fc" id="L135">            int timeInt = (int) s.getTotalTime();</span>
+            // Se non abbiamo già una strategia con questo tempo esatto, la aggiungiamo
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            if (!seenTimes.contains(timeInt)) {</span>
+<span class="fc" id="L138">                uniqueResults.add(s);</span>
+<span class="fc" id="L139">                seenTimes.add(timeInt);</span>
+            }
+<span class="fc bfc" id="L141" title="All 2 branches covered.">            if (uniqueResults.size() &gt;= 3) break; // Ci fermiamo a 3</span>
+<span class="fc" id="L142">        }</span>
+
+<span class="fc" id="L144">        return uniqueResults;</span>
+    }
+    /**
+     * FUNZIONE RICORSIVA CORE (DP).
+     * &lt;p&gt;
+     * Questo metodo implementa il cuore dell'algoritmo di Programmazione Dinamica.
+     * Calcola il tempo minimo necessario per completare la gara partendo da uno stato specifico
+     * definito dal giro corrente e dalle mescole già utilizzate.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Utilizza la tecnica della &lt;b&gt;Memoization&lt;/b&gt;: prima di calcolare una soluzione, controlla
+     * se lo stato (currentLap, usedTyresMask) è già stato risolto e salvato nella mappa {@code memo}.
+     * Se è un nuovo stato, esplora tutte le possibili decisioni future (quale gomma montare e per quanti giri),
+     * sceglie quella che minimizza il tempo totale e salva la decisione migliore.
+     * &lt;/p&gt;
+     *
+     * @param currentLap    Il giro attuale da cui inizia il prossimo stint (stato temporale).
+     * @param usedTyresMask Una bitmask intera che traccia lo storico delle mescole usate.
+     * (es. bit 0 = Soft, bit 1 = Medium, bit 2 = Hard).
+     * Indispensabile per verificare il regolamento delle due mescole.
+     * @param totalLaps     Il numero totale di giri della gara.
+     * @param tyres         La lista delle predizioni disponibili per le gomme.
+     * @return Il tempo minimo stimato in secondi per arrivare alla fine della gara da questo punto,
+     * oppure {@code INFINITY} se non esiste una strategia valida.
+     */
+    private double solve(int currentLap, int usedTyresMask, int totalLaps, List&lt;TyrePrediction&gt; tyres) {
+        // CASO BASE: Gara finita
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (currentLap == totalLaps) {</span>
+            // Controlliamo la regola: abbiamo usato almeno 2 mescole diverse?
+            // Contiamo i bit a 1 nella maschera
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (Integer.bitCount(usedTyresMask) &gt;= 2) {</span>
+<span class="fc" id="L175">                return 0; // Costo 0 per finire (abbiamo già finito)</span>
+            } else {
+<span class="fc" id="L177">                return INFINITY; // Strategia illegale, penalità infinita</span>
+            }
+        }
+
+        // MEMOIZATION: Se abbiamo già calcolato questo stato, restituiamo il valore salvato
+<span class="fc" id="L182">        String stateKey = currentLap + &quot;-&quot; + usedTyresMask;</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (memo.containsKey(stateKey)) {</span>
+<span class="fc" id="L184">            return memo.get(stateKey);</span>
+        }
+
+<span class="fc" id="L187">        double minTime = INFINITY;</span>
+<span class="fc" id="L188">        StintDecision bestDecision = null;</span>
+
+        // PROVIAMO TUTTE LE POSSIBILI MOSSE (Next Stint)
+        // Iteriamo su ogni mescola disponibile
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        for (int i = 0; i &lt; tyres.size(); i++) {</span>
+<span class="fc" id="L193">            TyrePrediction tyre = tyres.get(i);</span>
+            
+            // Maschera aggiornata se usiamo questa gomma (1 &lt;&lt; i accende il bit i-esimo)
+<span class="fc" id="L196">            int nextMask = usedTyresMask | (1 &lt;&lt; i);</span>
+
+            // Proviamo tutte le lunghezze possibili per questo stint
+            // Minimo 5 giri, massimo fino alla fine della gara
+<span class="fc bfc" id="L200" title="All 2 branches covered.">            for (int laps = 10; laps &lt;= (totalLaps - currentLap); laps += 1) { // Step 1 per precisione massima</span>
+                
+<span class="fc" id="L202">                int nextLap = currentLap + laps;</span>
+                
+                // Costo = Tempo guida + Pit Stop (se non è la partenza)
+<span class="fc" id="L205">                double driveTime = calculateStintTime(tyre, laps);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">                double pitCost = (currentLap == 0) ? 0 : PIT_STOP_LOSS;</span>
+                
+                // RICORSIONE: Tempo totale = costo attuale + costo migliore dal prossimo giro in poi
+<span class="fc" id="L209">                double timeToFinish = solve(nextLap, nextMask, totalLaps, tyres);</span>
+<span class="fc" id="L210">                double totalTime = driveTime + pitCost + timeToFinish;</span>
+
+<span class="fc bfc" id="L212" title="All 2 branches covered.">                if (totalTime &lt; minTime) {</span>
+<span class="fc" id="L213">                    minTime = totalTime;</span>
+                    // Memorizziamo la decisione presa per ricostruire il percorso dopo
+<span class="fc" id="L215">                    bestDecision = new StintDecision(tyre.getCompound(), laps, nextMask);</span>
+                }
+            }
+        }
+
+        // Salviamo il risultato in memoria
+<span class="fc" id="L221">        memo.put(stateKey, minTime);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if (bestDecision != null) {</span>
+<span class="fc" id="L223">            bestDecisions.put(stateKey, bestDecision);</span>
+        }
+
+<span class="fc" id="L226">        return minTime;</span>
+    }
+
+    /**
+     * Ricostruisce la strategia ottinale completa a partire dai dati salvati.
+     * &lt;p&gt;
+     * Una volta che il metodo {@code solve()} ha popolato la mappa {@code bestDecisions},
+     * questo metodo &quot;naviga&quot; attraverso le decisioni migliori salvate per trasformarle
+     * in una lista ordinata di oggetti {@link Stint} comprensibile per l'utente.
+     * &lt;/p&gt;
+     *
+     * @param startLap  Il giro di partenza della ricostruzione.
+     * @param startMask La maschera delle gomme iniziale.
+     * @param totalLaps Il numero totale di giri.
+     * @param tyres     Le informazioni sulle gomme.
+     * @return Un oggetto {@link RaceStrategy} completo, o {@code null} se il percorso è interrotto.
+     */
+    // Ricostruisce la strategia seguendo le &quot;briciole di pane&quot; lasciate dalla DP
+    private RaceStrategy reconstructStrategy(int startLap, int startMask, int totalLaps, List&lt;TyrePrediction&gt; tyres) {
+<span class="fc" id="L245">        RaceStrategy strategy = new RaceStrategy();</span>
+<span class="fc" id="L246">        int currentLap = startLap;</span>
+<span class="fc" id="L247">        int mask = startMask;</span>
+<span class="fc" id="L248">        int stops = -1; </span>
+        
+        // Se partiamo da metà gara (es. per le alternative), i pit stop vanno contati diversamente
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">        if (startLap &gt; 0) stops = 0; </span>
+
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        while (currentLap &lt; totalLaps) {</span>
+<span class="fc" id="L254">            String key = currentLap + &quot;-&quot; + mask;</span>
+<span class="fc" id="L255">            StintDecision decision = bestDecisions.get(key);</span>
+            
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            if (decision == null) return null; </span>
+
+<span class="fc" id="L259">            strategy.getStints().add(new Stint(decision.compound, currentLap + 1, currentLap + decision.laps));</span>
+            
+<span class="fc" id="L261">            stops++;</span>
+<span class="fc" id="L262">            currentLap += decision.laps;</span>
+<span class="fc" id="L263">            mask = decision.nextMask;</span>
+<span class="fc" id="L264">        }</span>
+        
+<span class="fc" id="L266">        strategy.setPitStops(stops);</span>
+        
+        // Recuperiamo il tempo totale specifico per QUESTA strategia
+        // Usiamo la chiave di partenza passata come argomento
+<span class="fc" id="L270">        String startKey = startLap + &quot;-&quot; + startMask;</span>
+<span class="fc" id="L271">        Double totalTime = memo.get(startKey);</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        strategy.setTotalTime(totalTime != null ? totalTime : 0.0);</span>
+        
+<span class="fc" id="L274">        return strategy;</span>
+    }
+
+    /**
+     * Calcola il tempo totale impiegato per percorrere un certo numero di giri con una specifica gomma.
+     * &lt;p&gt;
+     * Simula il degrado giro per giro: al tempo base viene aggiunto il tasso di degrado
+     * accumulato per ogni giro successivo al primo.
+     * Modello lineare: Tempo(giro i) = BaseTime + (i * DegradationRate).
+     * &lt;/p&gt;
+     *
+     * @param tyre La predizione della gomma (contiene base time e degradation rate).
+     * @param laps Il numero di giri da percorrere nello stint.
+     * @return Il tempo totale in secondi.
+     */
+    private double calculateStintTime(TyrePrediction tyre, int laps) {
+<span class="fc" id="L290">        double total = 0;</span>
+<span class="fc" id="L291">        double currentLapTime = tyre.getBase_time();</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        for (int i = 0; i &lt; laps; i++) {</span>
+<span class="fc" id="L293">            total += currentLapTime;</span>
+<span class="fc" id="L294">            currentLapTime += tyre.getDegradation_rate();</span>
+        }
+<span class="fc" id="L296">        return total;</span>
+    }
+
+    /**
+     * Classe helper interna (DTO) per memorizzare una decisione ottimale nel grafo DP.
+     * &lt;p&gt;
+     * Salva quale gomma è stata scelta, per quanti giri e quale sarà la prossima bitmask,
+     * permettendo al metodo {@code reconstructStrategy} di ripercorrere il cammino minimo.
+     * &lt;/p&gt;
+     */
+    // Classe helper interna per salvare le decisioni
+    private static class StintDecision {
+        String compound;
+        int laps;
+        int nextMask;
+
+<span class="fc" id="L312">        public StintDecision(String compound, int laps, int nextMask) {</span>
+<span class="fc" id="L313">            this.compound = compound;</span>
+<span class="fc" id="L314">            this.laps = laps;</span>
+<span class="fc" id="L315">            this.nextMask = nextMask;</span>
+<span class="fc" id="L316">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

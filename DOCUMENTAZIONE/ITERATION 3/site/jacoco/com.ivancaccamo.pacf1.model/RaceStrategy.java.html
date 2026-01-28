@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RaceStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.model</a> &gt; <span class="el_source">RaceStrategy.java</span></div><h1>RaceStrategy.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Rappresenta una strategia di gara completa calcolata dal sistema.
+ * &lt;p&gt;
+ * Questa classe è il risultato finale dell'algoritmo di ottimizzazione.
+ * Contiene la sequenza ordinata degli stint (frazioni di gara) da percorrere,
+ * il numero totale di soste previste e il tempo complessivo stimato per completare la gara.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+public class RaceStrategy {
+
+    /**
+     * Il tempo totale stimato per completare la gara seguendo questa strategia.
+     * Include i tempi di percorrenza in pista e i tempi persi in pit-lane.
+     */
+    private double totalTime;
+
+    /**
+     * Il numero totale di pit-stop previsti in questa strategia.
+     */
+    private int pitStops;
+
+    /**
+     * La lista sequenziale degli stint che compongono la strategia.
+     * Ogni stint definisce la mescola da usare e il numero di giri da percorrere.
+     */
+<span class="fc" id="L33">    private List&lt;Stint&gt; stints = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Costruttore vuoto di default.
+     * Inizializza la lista degli stint come un ArrayList vuoto.
+     */
+    // Costruttore vuoto
+<span class="fc" id="L40">    public RaceStrategy() {}</span>
+
+    // Getters e Setters
+
+    /**
+     * Restituisce il tempo totale di gara previsto.
+     * @return Il tempo in secondi.
+     */
+<span class="fc" id="L48">    public double getTotalTime() { return totalTime; }</span>
+
+    /**
+     * Imposta il tempo totale di gara.
+     * @param totalTime Il tempo in secondi.
+     */
+<span class="fc" id="L54">    public void setTotalTime(double totalTime) { this.totalTime = totalTime; }</span>
+
+    /**
+     * Restituisce il numero di soste ai box.
+     * @return Il numero di pit-stop.
+     */
+<span class="fc" id="L60">    public int getPitStops() { return pitStops; }</span>
+
+    /**
+     * Imposta il numero di soste ai box.
+     * @param pitStops Il numero di pit-stop.
+     */
+<span class="fc" id="L66">    public void setPitStops(int pitStops) { this.pitStops = pitStops; }</span>
+
+    /**
+     * Restituisce la lista degli stint.
+     * @return Una lista di oggetti {@link Stint}.
+     */
+<span class="fc" id="L72">    public List&lt;Stint&gt; getStints() { return stints; }</span>
+
+    /**
+     * Imposta la lista degli stint della strategia.
+     * @param stints La lista di stint.
+     */
+<span class="nc" id="L78">    public void setStints(List&lt;Stint&gt; stints) { this.stints = stints; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StrategyController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PAC-F1 Backend Java</a> &gt; <a href="index.source.html" class="el_package">com.ivancaccamo.pacf1.controller</a> &gt; <span class="el_source">StrategyController.java</span></div><h1>StrategyController.java</h1><pre class="source lang-java linenums">package com.ivancaccamo.pacf1.controller;
+
+import com.ivancaccamo.pacf1.model.PredictionResponse;
+import com.ivancaccamo.pacf1.model.RaceStrategy;
+import com.ivancaccamo.pacf1.model.SavedStrategy;
+import com.ivancaccamo.pacf1.repository.StrategyRepository;
+import com.ivancaccamo.pacf1.service.OptimizationEngine;
+import com.ivancaccamo.pacf1.service.PythonMLService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Controller REST principale dell'applicazione SPS-F1.
+ * &lt;p&gt;
+ * Questa classe agisce come punto di ingresso per le API (Facade Pattern),
+ * orchestrando la comunicazione tra il frontend, il servizio di Machine Learning (Python)
+ * e il motore di ottimizzazione interno (Java).
+ * Gestisce inoltre le operazioni CRUD per il salvataggio dello storico delle strategie.
+ * &lt;/p&gt;
+ *
+ * @author Team SPS-F1
+ */
+@RestController
+@RequestMapping(&quot;/api&quot;)
+<span class="nc" id="L28">public class StrategyController {</span>
+
+    @Autowired
+    private PythonMLService mlService;
+
+    @Autowired
+    private OptimizationEngine optimizer;
+
+    @Autowired
+    private StrategyRepository repository;
+
+    /**
+     * Calcola le migliori strategie di gara basandosi sui parametri ambientali forniti.
+     * &lt;p&gt;
+     * Il flusso di esecuzione è il seguente:
+     * 1. Invia i dati meteo al microservizio Python per ottenere le curve di degrado.
+     * 2. Se le predizioni sono valide, invoca l'OptimizationEngine.
+     * 3. Restituisce le Top 3 strategie ottimali calcolate tramite Programmazione Dinamica.
+     * &lt;/p&gt;
+     *
+     * @param circuit   Il nome del circuito (es. &quot;Bahrain Grand Prix&quot;).
+     * @param laps      Il numero totale di giri della gara.
+     * @param airTemp   La temperatura dell'aria in gradi Celsius.
+     * @param trackTemp La temperatura dell'asfalto in gradi Celsius.
+     * @return Una lista di oggetti {@link RaceStrategy} contenente le strategie suggerite,
+     * o una lista vuota se il servizio ML non risponde.
+     */
+    // 1. Calcola Strategia
+    @GetMapping(&quot;/strategy&quot;)
+    public List&lt;RaceStrategy&gt; getStrategy(
+            @RequestParam(defaultValue = &quot;Bahrain Grand Prix&quot;) String circuit,
+            @RequestParam(defaultValue = &quot;57&quot;) int laps,
+            @RequestParam(defaultValue = &quot;30.0&quot;) double airTemp,
+            @RequestParam(defaultValue = &quot;45.0&quot;) double trackTemp) {
+
+<span class="nc" id="L63">        PredictionResponse predictions = mlService.getPrediction(circuit, airTemp, trackTemp);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (predictions == null) return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L65">        return optimizer.calculateTop3Strategies(laps, predictions.getPredictions());</span>
+    }
+
+    /**
+     * Salva una specifica strategia nel database persistente.
+     * &lt;p&gt;
+     * Permette all'utente di archiviare una simulazione ritenuta interessante
+     * per poterla consultare successivamente nella sezione &quot;Archivio&quot;.
+     * &lt;/p&gt;
+     *
+     * @param strategy L'oggetto {@link SavedStrategy} contenente i dettagli della simulazione da salvare.
+     * @return L'oggetto salvato, comprensivo dell'ID generato dal database.
+     */
+    // 2. Salva una strategia nel DB
+    @PostMapping(&quot;/history&quot;)
+    public SavedStrategy saveStrategy(@RequestBody SavedStrategy strategy) {
+<span class="nc" id="L81">        return repository.save(strategy);</span>
+    }
+
+    /**
+     * Recupera l'intero storico delle simulazioni salvate.
+     *
+     * @return Una lista di tutte le strategie presenti nel database.
+     */
+    // 3. Leggi tutto lo storico
+    @GetMapping(&quot;/history&quot;)
+    public List&lt;SavedStrategy&gt; getHistory() {
+<span class="nc" id="L92">        return repository.findAll();</span>
+    }
+
+    /**
+     * Elimina una strategia dall'archivio.
+     *
+     * @param id L'identificativo univoco (Primary Key) della strategia da rimuovere.
+     */
+    // 4. Cancella una strategia dall'archivio
+    @DeleteMapping(&quot;/history/{id}&quot;)
+    public void deleteHistory(@PathVariable Long id) {
+<span class="nc" id="L103">        repository.deleteById(id);</span>
+<span class="nc" id="L104">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
