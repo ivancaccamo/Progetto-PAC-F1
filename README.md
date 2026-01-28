@@ -109,9 +109,9 @@ Il progetto è stato validato attraverso diverse metodologie di testing per gara
 
 Progetto realizzato dal **Team SPS-F1**:
 
-* **Andrea Birolini** (Matr. *[Inserisci Matricola]*)
-* **Ivan Caccamo** (Matr. *[Inserisci Matricola]*)
-* **[Nome Terzo Membro]** (Matr. *[Inserisci Matricola]*)
+* **Andrea Birolini** (Matr. *1087070*)
+* **Ivan Caccamo** (Matr. *1085892*)
+* **Luca Rossi** (Matr. *1086223*)
 
 ---
 
