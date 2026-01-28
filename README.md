@@ -57,8 +57,51 @@ Lo script eseguirà automaticamente:
 Se preferisci avviare i servizi manualmente, segui questi passaggi in due terminali separati.
 
 ### 1. Avvio Microservizio Python (ML)
+Questo modulo gestisce le predizioni di Machine Learning.
+
 ```bash
+# Spostati nella cartella del modulo Python
 cd code/ml-python
-# (Opzionale) Attiva il venv
+
+# (Opzionale ma consigliato) Crea e attiva un virtual environment
+# Windows: python -m venv venv && venv\Scripts\activate
+# Mac/Linux: python3 -m venv venv && source venv/bin/activate
+
+# Installa le dipendenze necessarie
 pip install -r requirements.txt
+
+# Avvia il server Flask
 python app.py
+✅ Il servizio sarà attivo su: http://localhost:5000
+
+2. Avvio Backend Java (App)
+Questo modulo gestisce la logica di business, l'algoritmo di ottimizzazione e l'interfaccia web.
+
+Bash
+
+# Apri un NUOVO terminale e spostati nella cartella Java
+cd code/backend-java
+
+# Avvia l'applicazione con Maven
+mvn spring-boot:run
+✅ L'applicazione sarà attiva su: http://localhost:8080
+
+📂 Struttura del Progetto
+Plaintext
+
+Progetto-PAC-F1/
+├── code/
+│   ├── backend-java/       # Codice sorgente Java (Spring Boot)
+│   │   ├── src/main/java   # Controller, Service, Model, Repository
+│   │   ├── src/main/resources/static  # Frontend (HTML/CSS/JS)
+│   │   └── pom.xml         # Dipendenze Maven
+│   │
+│   └── ml-python/          # Codice sorgente Python
+│       ├── dataset/        # Dati di training (CSV)
+│       ├── model/          # Modelli .pkl serializzati
+│       ├── app.py          # Server Flask (API)
+│       └── requirements.txt
+│
+├── docs/                   # Documentazione di progetto (LaTeX, PDF)
+├── img/                    # Screenshot e diagrammi per i report
+└── start.bat               # Script di avvio automatico (Windows)
