@@ -7,7 +7,7 @@ Progetto realizzato per il corso di *Progettazione, Algoritmi e Computabilità* 
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 Il sistema è suddiviso in due moduli principali:
 
@@ -24,7 +24,7 @@ Il sistema è suddiviso in due moduli principali:
 
 ---
 
-## 📋 Prerequisiti
+## Prerequisiti
 
 Per eseguire il progetto in locale assicurarsi di avere installato:
 
@@ -35,7 +35,7 @@ Per eseguire il progetto in locale assicurarsi di avere installato:
 
 ---
 
-## 🚀 Quick Start (Avvio Automatico)
+## Quick Start (Avvio Automatico)
 
 Per facilitare l'avvio dei microservizi, è stato predisposto uno script di automazione per sistemi Windows.
 
@@ -52,7 +52,7 @@ Lo script eseguirà automaticamente:
 
 ---
 
-## ⚙️ Installazione Manuale
+## Installazione Manuale
 
 Se preferisci avviare i servizi manualmente, segui questi passaggi in due terminali separati.
 
@@ -62,16 +62,12 @@ Questo modulo gestisce le predizioni di Machine Learning.
 # Spostati nella cartella del modulo Python
 cd code/ml-python
 
-# (Opzionale ma consigliato) Crea e attiva un virtual environment
-# Windows: python -m venv venv && venv\Scripts\activate
-# Mac/Linux: python3 -m venv venv && source venv/bin/activate
-
 # Installa le dipendenze necessarie
 pip install -r requirements.txt
 
 # Avvia il server Flask
 python app.py
-✅ Il servizio sarà attivo su: http://localhost:5000
+Il servizio sarà attivo su: http://localhost:5000
 
 2. Avvio Backend Java (App)
 Questo modulo gestisce la logica di business, l'algoritmo di ottimizzazione e l'interfaccia web.
@@ -83,9 +79,9 @@ cd code/backend-java
 
 # Avvia l'applicazione con Maven
 mvn spring-boot:run
-✅ L'applicazione sarà attiva su: http://localhost:8080
+L'applicazione sarà attiva su: http://localhost:8080
 
-📂 Struttura del Progetto
+Struttura del Progetto
 Plaintext
 
 Progetto-PAC-F1/
