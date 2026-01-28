@@ -118,9 +118,9 @@ Progetto realizzato dal **Team SPS-F1**:
 ### 🎓 Riferimenti Accademici
 
 **Università degli Studi di Bergamo**
-Dipartimento di Ingegneria Gestionale, dell'Informazione e della Produzione
-Corso di Laurea Magistrale in Ingegneria Informatica
+Dipartimento di Ingegneria Gestionale, dell'Informazione e della Produzione  
+Corso di Laurea Magistrale in Ingegneria Informatica    
 
-**Corso:** Progettazione, Algoritmi e Computabilità (38090-MOD1)
-**Docente:** Prof.ssa Patrizia Scandurra
-**Anno Accademico:** 2025/2026
+**Corso:** Progettazione, Algoritmi e Computabilità (38090-MOD1)  
+**Docente:** Prof.ssa Patrizia Scandurra  
+**Anno Accademico:** 2025/2026  
